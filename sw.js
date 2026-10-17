@@ -1,8 +1,18 @@
-// Lectio service worker — build 202610180145
-const SHELL="lectio-shell-202610180145",DATA="lectio-data",FONTS="lectio-fonts";
+// Lectio service worker — build 202610180202
+const SHELL="lectio-shell-202610180202",DATA="lectio-data",FONTS="lectio-fonts";
 const SHELL_FILES=["./","index.html","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","icons/apple-touch-icon.png","icons/favicon-32.png","data/morph.json"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(SHELL).then(c=>c.addAll(SHELL_FILES)).then(()=>self.skipWaiting()))});
-self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith("lectio-shell-")&&k!==SHELL).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
+// On update: drop old app shells, and refresh only the saved Bible files whose contents changed
+async function refreshData(){
+  try{
+    const nh=await (await fetch("data/hashes.json",{cache:"no-store"})).json();
+    const c=await caches.open(DATA);const prev=await c.match("__hashes");
+    if(!prev){for(const k of await c.keys())await c.delete(k)}
+    else{const oh=await prev.json();for(const [f,h] of Object.entries(oh))if(nh[f]!==h)await c.delete(f)}
+    await c.put("__hashes",new Response(JSON.stringify(nh),{headers:{"Content-Type":"application/json"}}));
+  }catch(e){}
+}
+self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith("lectio-shell-")&&k!==SHELL).map(k=>caches.delete(k)))).then(refreshData).then(()=>self.clients.claim()))});
 self.addEventListener("fetch",e=>{
   const r=e.request;if(r.method!=="GET")return;
   const u=new URL(r.url);
