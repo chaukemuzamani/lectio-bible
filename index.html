@@ -225,6 +225,16 @@ em.sup{font-style:italic;color:var(--ink-soft)}
 .hits-meta{font-size:12px;color:var(--ink-soft);margin-bottom:10px;line-height:1.5}
 .hit{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--rule);padding:10px 4px;cursor:pointer;font-family:var(--body);font-size:15.5px;line-height:1.55}
 .hit:hover{background:var(--rubric-soft)}
+.hit-o{display:block;font-size:1.05em}
+.hit-o[lang="he"]{font-family:var(--heb);font-size:1.15em;line-height:1.8}
+.hit-t{display:block;font-size:.88em;color:var(--ink-soft);margin-top:3px}
+.hit-t em{font-style:normal;font-family:var(--ui);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;margin-right:4px}
+.uses-head{font-family:var(--body);font-size:17px;margin-bottom:4px}
+.uses-lemma{font-size:1.35em}.uses-lemma[lang="he"]{font-family:var(--heb)}
+.uses-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;margin:0 0 10px;font-size:13px}
+.chip{border:1px solid var(--rule);border-radius:99px;padding:1px 9px;background:var(--leaf);white-space:nowrap}
+.chip small{color:var(--ink-soft);font-family:var(--ui);font-size:11px}
+.chip [lang="he"]{font-family:var(--heb);font-size:1.15em}
 .hit b{font-family:var(--ui);font-size:12px;color:var(--rubric);display:block;margin-bottom:2px}
 .hit mark{background:var(--mark);color:inherit;border-radius:2px}
 .set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--rule)}
@@ -972,38 +982,85 @@ let sT;
 $("#searchIn").addEventListener("input",()=>{clearTimeout(sT);sT=setTimeout(doSearch,220)});
 $("#searchIn").addEventListener("keydown",async e=>{if(e.key==="Enter"){const r=parseRef(e.target.value,await loadVer(S.ver));if(r){closeSheets();go(r.book,r.ch,r.v)}}});
 function norm(s){return s.toLowerCase().replace(/ё/g,"е").replace(/[\[\]]/g,"").normalize("NFD").replace(/[̀-֑ͯ-ׇ]/g,"")}
-const HINT='<div class="hits-meta">Searches every verse of the selected version. Type a reference to jump there, or a Strong\'s number (H430, G26) to find every use in a tagged text.</div>';
+const HINT='<div class="hits-meta">Searches every verse of the selected version. Type a reference to jump there, or a Strong\'s number (H430, G26) to see every use of that Hebrew or Greek word.</div>';
 let srchSeq=0;
+function origFor(strong){
+  if(strong[0]==="H")return "HEB";
+  const v=vinfo(S.ver);if(v.orig&&v.lang==="el")return S.ver;
+  return ["KJV","UKJV","Geneva","Tyndale"].includes(S.ver)?"TR":"GRK";
+}
+const hasS=(x,s)=>Array.isArray(x)&&(x[1]||"").split(" ").includes(s);
 async function doSearch(){
   const seq=++srchSeq,q=$("#searchIn").value.trim(),body=$("#searchBody");
   if(q.length<2){body.innerHTML=HINT;return}
   const strongQ=/^[HGhg]0*\d{1,5}$/.test(q)?q[0].toUpperCase()+String(+q.slice(1)):null;
-  let vid=S.ver;
-  if(strongQ&&!vinfo(vid).tagged)vid=strongQ[0]==="H"?"KJV":"KJV";
-  const d=await loadVer(vid);
+  if(strongQ)return strongSearch(strongQ,seq);
+  const vid=S.ver,d=await loadVer(vid);
   let h="";
-  if(!strongQ){const r=parseRef(q,d);if(r)h+='<button class="hit" data-r="'+esc(r.book)+'|'+r.ch+'|'+(r.v||"")+'"><b>Go to</b>'+esc(bookLabel(r.book))+' '+r.ch+(r.v?':'+r.v:'')+'</button>'}
+  const r=parseRef(q,d);if(r)h+='<button class="hit" data-r="'+esc(r.book)+'|'+r.ch+'|'+(r.v||"")+'"><b>Go to</b>'+esc(bookLabel(r.book))+' '+r.ch+(r.v?':'+r.v:'')+'</button>';
   const books=orderedBooks(d).all;
   if(d.split){body.innerHTML=h+'<div class="hits-meta">Loading '+esc(vinfo(vid).name)+' for search…</div>';await Promise.all(books.map(n=>loadBook(vid,n)))}
   if(seq!==srchSeq)return;
-  const words=strongQ?[]:norm(q).split(/\s+/).filter(w=>w.length>1);
+  const words=norm(q).split(/\s+/).filter(w=>w.length>1);
   const hits=[];let total=0;
   for(const n of books){const c=await loadBook(vid,n);
-    c.forEach((ch,ci)=>ch.forEach((t,vi)=>{
-      let ok;
-      if(strongQ)ok=Array.isArray(t)&&t.some(x=>Array.isArray(x)&&(x[1]||"").split(" ").includes(strongQ));
-      else{const nt=norm(verseText(t));ok=words.length&&words.every(w=>nt.includes(w))}
-      if(ok){total++;if(hits.length<250)hits.push([n,ci+1,vi+1,t])}
-    }))}
+    c.forEach((ch,ci)=>ch.forEach((t,vi)=>{const nt=norm(verseText(t));if(words.length&&words.every(w=>nt.includes(w))){total++;if(hits.length<250)hits.push([n,ci+1,vi+1,t])}}))}
   if(seq!==srchSeq)return;
-  const label=strongQ?"Strong's "+strongQ+" in "+vinfo(vid).name+(vid!==S.ver?" (the selected version has no word tags)":""):vinfo(vid).name;
-  h+='<div class="hits-meta">'+total.toLocaleString()+' verse'+(total===1?'':'s')+' · '+esc(label)+(total>250?' · showing the first 250':'')+'</div>';
+  h+='<div class="hits-meta">'+total.toLocaleString()+' verse'+(total===1?'':'s')+' · '+esc(vinfo(vid).name)+(total>250?' · showing the first 250':'')+'</div>';
   const re=words.length?new RegExp("("+words.map(w=>w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+")","gi"):null;
+  h+=hits.map(([n,c,v,t])=>{let txt=esc(verseText(t));if(re)txt=txt.replace(re,"<mark>$1</mark>");
+    return '<button class="hit" data-r="'+esc(n)+'|'+c+'|'+v+'"><b>'+esc(bookLabel(n,vid))+' '+c+':'+v+'</b><span'+langAttr(vinfo(vid))+'>'+txt+'</span></button>'}).join("");
+  body.innerHTML=h;
+  body.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{const [n,c,v]=b.dataset.r.split("|");closeSheets();go(n,+c,v?+v:null)});
+}
+/* Uses of a Hebrew or Greek word: every verse of the original text that has it, the word marked,
+   with the verse in the reading version underneath; its forms and how the KJV renders it. */
+// "thou shalt love", "of God", "he that loveth" → the word itself (love, God, loveth)
+const RSTOP=new Set("of the a an and or but o as so even thy thine thou thee ye you your yours my mine me i we us our he she it his her its him them they their that this these those which who whom shall shalt will wilt to unto in into for with by from upon on at is was be been are were hath have had doth do did not no".split(" "));
+function coreRendering(t){
+  const ws=t.toLowerCase().replace(/[^a-z’' -]/g," ").split(/\s+/).filter(Boolean);
+  let a=0,b=ws.length;while(a<b-1&&RSTOP.has(ws[a]))a++;while(b>a+1&&RSTOP.has(ws[b-1]))b--;
+  return ws.slice(a,b).join(" ");
+}
+async function strongSearch(strongQ,seq){
+  const body=$("#searchBody");
+  const ov=origFor(strongQ),tv=vinfo(S.ver).orig?"KJV":S.ver;
+  const od=await loadVer(ov),kd=await loadVer("KJV");
+  const books=orderedBooks(od).all;
+  body.innerHTML='<div class="hits-meta">Finding '+esc(strongQ)+' in '+esc(vinfo(ov).name)+'…</div>';
+  await Promise.all(books.map(n=>loadBook(ov,n)));
+  if(seq!==srchSeq)return;
+  const hits=[],forms=new Map();let total=0,count=0;
+  for(const n of books){const c=await loadBook(ov,n);
+    c.forEach((ch,ci)=>ch.forEach((t,vi)=>{
+      if(!Array.isArray(t))return;const m=t.filter(x=>isOrigTok(x)&&hasS(x,strongQ));if(!m.length)return;
+      total++;count+=m.length;
+      for(const x of m){const f=x[0].replace(/[\u0591-\u05AF\u05BD\u05C0\u05C3׃׀.,;:·]/g,"");const e=forms.get(f)||{n:0,tr:x[2],gl:x[3]};e.n++;forms.set(f,e)}
+      if(hits.length<250)hits.push([n,ci+1,vi+1,t])}))}
+  // how the KJV renders the word, over every verse found
+  await Promise.all([...new Set(hits.map(h=>h[0]))].concat(books).filter((n,i,a)=>a.indexOf(n)===i&&kd.map[n]!=null).map(n=>loadBook("KJV",n)));
+  if(seq!==srchSeq)return;
+  const rend=new Map();
+  for(const n of books){if(kd.map[n]==null)continue;const c=await loadBook("KJV",n);
+    c.forEach(ch=>ch.forEach(t=>{if(Array.isArray(t))for(const x of t)if(!isOrigTok(x)&&hasS(x,strongQ)){const w=coreRendering(plain(x[0]));if(w)rend.set(w,(rend.get(w)||0)+1)}}))}
+  // the reading version's verses for the lines underneath
+  const td=await loadVer(tv).catch(()=>null);
+  if(td)await Promise.all([...new Set(hits.map(h=>h[0]))].filter(n=>td.map[n]!=null).map(n=>loadBook(tv,n).catch(()=>null)));
+  if(seq!==srchSeq)return;
+  const lex=await loadLex(strongQ[0]);const key=lexKeyFor(strongQ,lex);const le=key&&lex.e[key];
+  const he=strongQ[0]==="H",ol=he?' lang="he" dir="rtl"':' lang="el"';
+  let h='<div class="uses-head">'+(le?'<span class="uses-lemma"'+ol+'>'+esc(le[0])+'</span> <i class="muted">'+esc(le[1])+'</i> — <b>'+esc(le[3])+'</b> ':'')+'<span class="code">'+esc(strongQ)+'</span></div>';
+  h+='<div class="hits-meta">'+count.toLocaleString()+' time'+(count===1?'':'s')+' in '+total.toLocaleString()+' verse'+(total===1?'':'s')+' · '+esc(vinfo(ov).name)+(total>250?' · showing the first 250 verses':'')+'</div>';
+  const fl=[...forms.entries()].sort((a,b)=>b[1].n-a[1].n);
+  if(fl.length)h+='<div class="uses-row"><span class="ext-lbl">Forms</span>'+fl.slice(0,14).map(([f,e])=>'<span class="chip" title="'+esc(readable(e.tr||""))+' — '+esc(e.gl||"")+'"><span'+ol+'>'+esc(f)+'</span> <small>'+e.n+'</small></span>').join("")+(fl.length>14?'<span class="muted" style="font-size:12px">+'+(fl.length-14)+' more</span>':'')+'</div>';
+  const rl=[...rend.entries()].sort((a,b)=>b[1]-a[1]);
+  if(rl.length)h+='<div class="uses-row"><span class="ext-lbl">KJV renders it</span>'+rl.slice(0,12).map(([w,n])=>'<span class="chip">'+esc(w)+' <small>'+n+'</small></span>').join("")+(rl.length>12?'<span class="muted" style="font-size:12px">+'+(rl.length-12)+' more</span>':'')+'</div>';
   h+=hits.map(([n,c,v,t])=>{
-    let txt;
-    if(strongQ&&Array.isArray(t)){txt=t.map(x=>typeof x==="string"?esc(x):isOrigTok(x)?(x[1].split(" ").includes(strongQ)?'<mark>'+esc(x[0])+'</mark>':esc(x[0]))+" ":Array.isArray(x)?((x[1]||"").split(" ").includes(strongQ)?'<mark>'+esc(plain(x[0]))+'</mark>':esc(plain(x[0]))):"").join("")}
-    else{txt=esc(verseText(t));if(re)txt=txt.replace(re,"<mark>$1</mark>")}
-    return '<button class="hit" data-r="'+esc(n)+'|'+c+'|'+v+'" data-ver="'+vid+'"><b>'+esc(bookLabel(n,vid))+' '+c+':'+v+'</b><span'+langAttr(vinfo(vid))+'>'+txt+'</span></button>'}).join("");
+    const orig=t.map(x=>typeof x==="string"?esc(x):isOrigTok(x)?(hasS(x,strongQ)?'<mark>'+esc(x[0])+'</mark>':esc(x[0]))+(/־$/.test(x[0])?"":" "):"").join("");
+    let tr="",tc=c,tvv=v;
+    if(td&&td.map[n]!=null){const nn=fromK(tv,n,c,v)[0];if(nn){tc=nn[0];tvv=nn[1];const ch=(td.split?BC_[tv+"|"+n]:td.books[td.map[n]].c)||[];const tt=ch[tc-1]&&ch[tc-1][tvv-1];
+      if(tt)tr=Array.isArray(tt)&&vinfo(tv).tagged?tt.map(x=>typeof x==="string"?esc(plain(x)):Array.isArray(x)?(hasS(x,strongQ)?'<mark>'+esc(plain(x[0]))+'</mark>':esc(plain(x[0]))):(x&&x.q&&S.quotes?esc(x.q):"")).join(""):esc(verseText(tt))}}
+    return '<button class="hit" data-r="'+esc(n)+'|'+tc+'|'+tvv+'"><b>'+esc(bookLabel(n))+' '+c+':'+v+'</b><span class="hit-o"'+ol+'>'+orig+'</span>'+(tr?'<span class="hit-t"'+langAttr(vinfo(tv))+'><em>'+esc(vinfo(tv).short)+'</em> '+tr+'</span>':'')+'</button>'}).join("");
   body.innerHTML=h;
   body.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{const [n,c,v]=b.dataset.r.split("|");closeSheets();go(n,+c,v?+v:null)});
 }
