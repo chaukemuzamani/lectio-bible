@@ -25,7 +25,7 @@ if("serviceWorker" in navigator&&(location.protocol==="https:"||location.hostnam
   $("#offBtn").onclick=async()=>{
     const btn=$("#offBtn");btn.disabled=true;
     try{
-      let urls=["data/morph.json","data/lex-heb.json","data/lex-grk.json","data/vrs.json"];
+      let urls=["data/morph.json","data/lex-heb.json","data/lex-grk.json","data/vrs.json","data/lex/strongs-heb.json","data/lex/strongs-grk.json"];
       for(const id of [S.ver,"HEB","GRK","TR"])urls=urls.concat(await offUrls(id));
       const par=resolvePar();if(par&&!["HEB","GRK","TR"].includes(par))urls=urls.concat(await offUrls(par));
       urls=[...new Set(urls)];let done=0;

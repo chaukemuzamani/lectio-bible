@@ -182,6 +182,27 @@ em.sup{font-style:italic;color:var(--ink-soft)}
 .lexdef{font-family:var(--body);font-size:14.5px;line-height:1.6;max-width:76ch}
 .lexdef b{font-weight:600}
 .wd-entry+.wd-entry{border-top:1px dashed var(--rule);margin-top:12px;padding-top:12px}
+.lex-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.lex-tabs button{padding:4px 10px;font-size:12.5px;color:inherit}
+.lex-open{background:none;border:1px solid var(--rule);border-radius:6px;padding:4px 9px;font-size:12.5px;cursor:pointer;color:var(--ink-soft);margin-left:auto}
+.lex-open:hover{color:var(--rubric)}
+.lex-src{font-size:11.5px;color:var(--ink-soft);margin-top:10px}
+.lexlong [lang="he"]{unicode-bidi:isolate;line-height:1.6}
+.lexlong [lang="el"]{unicode-bidi:isolate}
+.lexlong .xref{color:var(--rubric);text-decoration:none;font-size:.92em;white-space:nowrap}
+.lexlong .xref:hover{text-decoration:underline}
+.lexlong .ab,.lexlong .ml-au{color:var(--ink-soft);font-size:.9em}
+.lexlong .ph{color:var(--ink-soft)}
+.lexlong sub{font-size:.7em;color:var(--ink-soft)}
+.lexlong .bdb-p{margin:0 0 .5em}
+.lexlong .bdb-sec,.lexlong .bdb-poi{margin:.35em 0 .35em 1.1em}
+.lexlong .bdb-rem{margin:.5em 0;font-size:.92em;color:var(--ink-soft)}
+.lexlong .ml-s{margin:.3em 0 .3em 1em}.lexlong .ml-l3{margin-left:2em}.lexlong .ml-l4{margin-left:3em}.lexlong .ml-l5{margin-left:4em}
+.lexlong .ml-et{color:var(--ink-soft)}
+.lex-sep{border:none;border-top:1px dashed var(--rule);margin:12px 0}
+.lexlink{background:none;border:none;padding:0;font:inherit;color:var(--rubric);cursor:pointer}
+.lexlink:hover{text-decoration:underline}
+#lexSheet .lexdef{max-width:none}
 .muted{color:var(--ink-soft)}
 .w.ap{cursor:help}
 
@@ -334,11 +355,14 @@ em.sup{font-style:italic;color:var(--ink-soft)}
       <p><b>Footnotes.</b> The KJV translators' margin notes, and the footnotes of the BSB and the WEB (Yahweh edition), appear as red letters in the text and in a list below each chapter.</p>
       <p><b>Greek editions.</b> NA28, SBL, Textus Receptus and Byzantine each use that edition's choice of words, drawn from the STEPBible amalgamated text. Spelling and word order follow the STEPBible base text, so they can differ slightly from the printed editions.</p>
       <p><b>Numbering.</b> Each version keeps its own chapter and verse numbers: the Synodal and Church Slavonic use Septuagint psalm numbers (Psalm 23 is 22) and count psalm titles as verses, JPS follows the Hebrew Bible (Malachi 4 is Malachi 3:19–24), Douay-Rheims the Vulgate and Brenton the Septuagint. Compare lines the two versions up verse by verse and shows the other version's own verse numbers where they differ. Highlights stay on the same verse in every version.</p>
-      <p><b>Licences.</b> Public domain: KJV, WEB, BSB, ASV, YLT, Darby, Webster, Geneva, Douay-Rheims, Tyndale, BBE, Brenton, UKJV, OEB, NHEB-ME, WMB, JPS 1917, Synodal, Church Slavonic, Makarius. CC BY-SA 4.0: LSV (Covenant Press), FBV, Shona (© 2017 Biblica). Hebrew and Greek tagging, lexicons and grammar: STEPBible.org / Tyndale House, CC BY 4.0, reformatted for this reader (source: github.com/STEPBible). NASB, NKJV, ESV, CJB, NIV, NLT, CSB, AMP, the modern Russian translations and all Xitsonga Bibles are under copyright, so they open on Bible.com.</p>
+      <p><b>Licences.</b> Public domain: KJV, WEB, BSB, ASV, YLT, Darby, Webster, Geneva, Douay-Rheims, Tyndale, BBE, Brenton, UKJV, OEB, NHEB-ME, WMB, JPS 1917, Synodal, Church Slavonic, Makarius. CC BY-SA 4.0: LSV (Covenant Press), FBV, Shona (© 2017 Biblica). Hebrew and Greek tagging, lexicons and grammar: STEPBible.org / Tyndale House, CC BY 4.0, reformatted for this reader (source: github.com/STEPBible). Dictionaries under “Full entry”: Strong’s Hebrew and Greek dictionaries from Open Scriptures (CC BY-SA); Brown–Driver–Briggs (1906, public domain), digital text by Eliran Wong (github.com/eliranwong/unabridged-BDB-Hebrew-lexicon); Liddell & Scott’s Intermediate Greek–English Lexicon, text provided by the Perseus Digital Library with funding from The Annenberg CPB/Project, CC BY-SA 3.0 US (via github.com/blinskey/middle-liddell). NASB, NKJV, ESV, CJB, NIV, NLT, CSB, AMP, the modern Russian translations and all Xitsonga Bibles are under copyright, so they open on Bible.com.</p>
       <p>Text sources: scrollmapper/bible_databases, BibleNLP/ebible, seven1m/open-bibles, STEPBible-Data.</p>
     </div>
   </div></div></div>
 
+<div class="scrim" id="lexSheet" hidden><div class="sheet" role="dialog" aria-label="Dictionary entry">
+  <div class="sheet-head"><h2 id="lexTitle">Dictionary</h2><button class="icon-btn" data-close aria-label="Close">✕</button></div>
+  <div class="sheet-body" id="lexSheetBody"></div></div></div>
 <div class="scrim" id="hlSheet" hidden><div class="sheet" role="dialog" aria-label="Highlights">
   <div class="sheet-head"><h2>Highlights</h2><button class="icon-btn" data-close aria-label="Close">✕</button></div>
   <div class="sheet-body" id="hlBody"></div></div></div>
@@ -787,6 +811,57 @@ function lexEntryHTML(key,lex){
    '<dl class="kv"><dt>Gloss</dt><dd><b>'+esc(gloss)+'</b></dd>'+(pos?'<dt>Type</dt><dd>'+esc(MORPH&&MORPH[pos]||pos)+'</dd>':'')+'</dl>'+
    (def?'<div class="lexdef" style="margin-top:8px">'+def+'</div>':'')+'</div>';
 }
+/* ---------- dictionaries: Brief (STEPBible) · Strong's · BDB · Middle Liddell ---------- */
+const LEXSRC={H:[["brief","Brief"],["strongs","Strong’s"],["bdb","BDB"]],G:[["brief","Brief"],["strongs","Strong’s"],["ml","Liddell"]]};
+const LEXNAME={brief:"STEPBible brief lexicon (Tyndale House)",strongs:"Strong’s Exhaustive Concordance dictionary (1890)",bdb:"Brown–Driver–Briggs Hebrew and English Lexicon (1906), unabridged",ml:"Liddell & Scott, An Intermediate Greek–English Lexicon (1889)"};
+const LXC={};
+function lexFile(u){return LXC[u]||(LXC[u]=fetchJSON(u).catch(e=>{delete LXC[u];throw e}))}
+function lexChunk(src,k){return lexFile("data/lex/"+src+"/"+Math.floor(+k.slice(1)/100)+".json")}
+function lexSrcFor(L){const v=store.get("lexSrc"+L,"brief");return LEXSRC[L].some(x=>x[0]===v)?v:"brief"}
+function linkStrongs(t){return esc(t).replace(/([\u0591-\u05F4\uFB1D-\uFB4F]+(?:[ \u05BE][\u0591-\u05F4\uFB1D-\uFB4F]+)*)/g,'<span lang="he">$1</span>').replace(/\b([HG])0*(\d{1,5})\b/g,(m,a,n)=>'<button class="lexlink" data-s="'+a+n+'">'+a+n+'</button>')}
+function lexHead(k,lemma,tr,he){return '<div class="wd-word"><span class="wd-orig"'+(he?' lang="he" dir="rtl"':' lang="el"')+'>'+esc(lemma)+'</span>'+(tr?'<span class="wd-tr">'+esc(tr)+'</span>':'')+'<span class="code">'+esc(k)+'</span></div>'}
+async function lexBody(entries,src){
+  if(src==="brief")return entries.map(e=>lexEntryHTML(e.key,e.lex)).join("");
+  const seen=new Set(),out=[];
+  for(const e of entries){
+    const k=baseStrong(e.key);if(seen.has(k))continue;seen.add(k);
+    const he=k[0]==="H",le=e.lex.e[e.key]||[];
+    if(src==="strongs"){
+      const d=await lexFile("data/lex/strongs-"+(he?"heb":"grk")+".json");const x=d[k];
+      if(!x){out.push('<div class="wd-entry">'+lexHead(k,le[0]||"",le[1]||"",he)+'<div class="muted">No Strong’s entry for '+esc(k)+'.</div></div>');continue}
+      const [lemma,tr,pron,der,def,kjv]=x;
+      out.push('<div class="wd-entry">'+lexHead(k,lemma,tr,he)+'<dl class="kv">'+(pron?'<dt>Say</dt><dd>'+esc(pron)+'</dd>':'')+
+        (def?'<dt>Meaning</dt><dd class="lexdef">'+linkStrongs(def)+'</dd>':'')+(kjv?'<dt>KJV</dt><dd>'+linkStrongs(kjv)+'</dd>':'')+(der?'<dt>Origin</dt><dd>'+linkStrongs(der)+'</dd>':'')+'</dl></div>');
+    }else{
+      let list=null;try{list=(await lexChunk(src,k))[k]}catch(err){}
+      const name=src==="bdb"?"BDB":"the Intermediate Liddell";
+      out.push('<div class="wd-entry">'+lexHead(k,le[0]||"",le[1]||"",he)+(list&&list.length?'<div class="lexdef lexlong">'+list.join('<hr class="lex-sep">')+'</div>':'<div class="muted">'+esc(k)+' is not in '+name+'.'+(src==="ml"?' It covers classical Greek, so some New Testament names and late words are missing — try Strong’s or Brief.':'')+'</div>')+'</div>');
+    }
+  }
+  return out.join("");
+}
+let lexCur=null,lexSeq=0;
+function lexBarHTML(L,src){return '<div class="lex-bar"><div class="seg lex-tabs" role="tablist" aria-label="Dictionary">'+LEXSRC[L].map(([k,n])=>'<button role="tab" data-src="'+k+'" aria-selected="'+(k===src)+'"'+(k===src?' class="on"':'')+'>'+n+'</button>').join("")+'</div><button class="lex-open" title="Read in a larger window">Open ⤢</button></div>'}
+async function fillLex(){
+  if(!lexCur)return;const seq=++lexSeq,{entries,L}=lexCur,src=lexSrcFor(L);
+  const col=$("#lexCol");if(!col)return;
+  col.innerHTML=lexBarHTML(L,src)+'<div class="lex-body"><div class="muted">Loading…</div></div>';
+  let html;try{html=await lexBody(entries,src)}catch(e){html='<div class="muted">This dictionary could not be loaded. Check your connection and try again.</div>'}
+  if(seq!==lexSeq)return;
+  col.querySelector(".lex-body").innerHTML=html+'<div class="lex-src">'+esc(LEXNAME[src])+'</div>';
+  if(!$("#lexSheet").hidden)$("#lexSheetBody").innerHTML=col.querySelector(".lex-body").innerHTML;
+}
+function lexClick(e){
+  const tab=e.target.closest(".lex-tabs button");if(tab&&lexCur){store.set("lexSrc"+lexCur.L,tab.dataset.src);fillLex();return true}
+  if(e.target.closest(".lex-open")){const b=$("#lexCol .lex-body");if(b){$("#lexSheetBody").innerHTML=b.innerHTML;$("#lexTitle").textContent=LEXNAME[lexSrcFor(lexCur.L)].split(" (")[0];openSheet("#lexSheet")}return true}
+  const ll=e.target.closest(".lexlink");if(ll){closeSheets();openSheet("#searchSheet");$("#searchIn").value=ll.dataset.s;doSearch();return true}
+  const xr=e.target.closest(".xref[data-k]");if(xr){const [b,c,v]=xr.dataset.k.split("|");const d=VC[S.ver];
+    if(!(d&&d.map[b]!=null)){toast(bookLabel(b)+" is not in "+vinfo(S.ver).short);return true}
+    const n=fromK(S.ver,b,+c,+v)[0]||[+c,+v];closeSheets();go(b,n[0],n[1]);return true}
+  return false;
+}
+$("#dockMore").addEventListener("click",lexClick);
+$("#lexSheetBody").addEventListener("click",lexClick);
 function readable(t){return t.replace(/\./g,"").replace(/[\[\]]/g,"").toLowerCase()}
 function textOf(html){const d=document.createElement("div");d.innerHTML=html.replace(/<br>/g," ");return d.textContent.replace(/\s+/g," ").trim()}
 const MINOR=new Set(["H853","G3588"]);
@@ -833,7 +908,11 @@ async function showDetails(r){
     if(m.length)left+='<dt>Grammar</dt><dd>'+m.map(([c,x])=>'<div><span class="code">'+esc(c)+'</span> '+prettyMorph(x)+'</div>').join("")+'</dd>';
   }
   left+='<dt>Reference</dt><dd>'+esc(ref)+'</dd></dl>';
-  $("#dockMore").innerHTML='<div class="wd"><div>'+left+'</div><div>'+entries.map(e=>lexEntryHTML(e.key,e.lex)).join("")+'</div></div>';
+  $("#dockMore").innerHTML='<div class="wd"><div>'+left+'</div><div id="lexCol"></div></div>';
+  lexCur={entries,L:main.key[0]==="H"?"H":"G"};
+  const src0=lexSrcFor(lexCur.L);
+  if(src0==="brief"){$("#lexCol").innerHTML=lexBarHTML(lexCur.L,src0)+'<div class="lex-body">'+entries.map(e=>lexEntryHTML(e.key,e.lex)).join("")+'<div class="lex-src">'+esc(LEXNAME.brief)+'</div></div>'}
+  else fillLex();
   curDet={find:baseStrong(main.key)};
   ["moreBtn","usesBtn","pinBtn"].forEach(id=>$("#"+id).disabled=false);
   $("#dockMore").hidden=!moreOpen;sizeDock();
@@ -1119,7 +1198,7 @@ if("serviceWorker" in navigator&&(location.protocol==="https:"||location.hostnam
   $("#offBtn").onclick=async()=>{
     const btn=$("#offBtn");btn.disabled=true;
     try{
-      let urls=["data/morph.json","data/lex-heb.json","data/lex-grk.json","data/vrs.json"];
+      let urls=["data/morph.json","data/lex-heb.json","data/lex-grk.json","data/vrs.json","data/lex/strongs-heb.json","data/lex/strongs-grk.json"];
       for(const id of [S.ver,"HEB","GRK","TR"])urls=urls.concat(await offUrls(id));
       const par=resolvePar();if(par&&!["HEB","GRK","TR"].includes(par))urls=urls.concat(await offUrls(par));
       urls=[...new Set(urls)];let done=0;
