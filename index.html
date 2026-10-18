@@ -18,6 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Serif+Hebrew:wght@400;600&display=swap">
+<script>try{const t=JSON.parse(localStorage.getItem("lectio.theme"));if(t==="light"||t==="dark"||t==="sepia")document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 /* Layout: one reading column (two in Compare) under a quiet sticky bar, with an Accordance-style word-details dock along the bottom. Rubric red marks chapter numerals, verse numbers and notes; teal marks linked words. */
 :root{
@@ -32,12 +33,17 @@
   --heb:"Noto Serif Hebrew","SBL Hebrew","Times New Roman",serif;
   --size:19px; --dock:0px;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]):not([data-theme="sepia"]){
   --paper:#15171c; --leaf:#1c1f26; --ink:#e4e2dc; --ink-soft:#9a9ea9; --rule:#2d313a;
   --rubric:#e07a62; --rubric-soft:#3a2420; --mark:#5a4a12; --link:#6fc7cc; --link-soft:#173c3f; --h-yellow:#4d4119; --h-green:#1f3d24; --h-blue:#1c3350; --h-pink:#4a2430; --h-purple:#352a4d; --wj:#ff8f7a; color-scheme:dark}}
 :root[data-theme="dark"]{
   --paper:#15171c; --leaf:#1c1f26; --ink:#e4e2dc; --ink-soft:#9a9ea9; --rule:#2d313a;
   --rubric:#e07a62; --rubric-soft:#3a2420; --mark:#5a4a12; --link:#6fc7cc; --link-soft:#173c3f; --h-yellow:#4d4119; --h-green:#1f3d24; --h-blue:#1c3350; --h-pink:#4a2430; --h-purple:#352a4d; --wj:#ff8f7a; color-scheme:dark}
+/* Sepia: warm paper for long reading */
+:root[data-theme="sepia"]{
+  --paper:#f3ead6; --leaf:#faf4e5; --ink:#2e261a; --ink-soft:#6e6250; --rule:#e0d3b5;
+  --rubric:#9b311d; --rubric-soft:#f0dccd; --mark:#f6e08e; --link:#1f5f63; --link-soft:#d9e5d6; --wj:#a82a1c;
+  --h-yellow:#f4df8f; --h-green:#cfe3b6; --h-blue:#c9dbe9; --h-pink:#f0cdcf; --h-purple:#ddd0e6; color-scheme:light}
 body{background:var(--paper);color:var(--ink);font-family:var(--ui);font-size:14px}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
 button,select,input{font:inherit;color:inherit}
@@ -48,6 +54,42 @@ button,select,input{font:inherit;color:inherit}
   padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .mark{font-family:var(--display);font-weight:600;font-size:24px;margin-right:6px;white-space:nowrap}
 .mark b{color:var(--rubric);font-weight:600}
+button.mark{background:none;border:none;padding:0;cursor:pointer;color:inherit;line-height:1.2}
+button.mark:hover b{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+/* Home */
+body.at-home .bar,body.at-home main,body.at-home .dock{display:none!important}
+.home{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;
+  padding:max(28px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(28px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.home-in{width:100%;max-width:560px}
+.home-top{margin-bottom:34px}
+.home-mark{font-family:var(--display);font-weight:600;font-size:68px;line-height:.95}
+.home-mark b{color:var(--rubric);font-weight:600}
+.home-sub{font-size:11.5px;text-transform:uppercase;letter-spacing:.16em;color:var(--ink-soft);margin-top:10px}
+.home-card{display:flex;align-items:center;gap:16px;width:100%;text-align:left;background:var(--leaf);border:1px solid var(--rule);border-radius:10px;padding:16px 18px;cursor:pointer;color:inherit;transition:border-color .15s,transform .1s}
+.home-card:hover{border-color:var(--ink-soft)}
+.home-card:active{transform:scale(.99)}
+.hc-ic{width:40px;height:40px;border-radius:50%;background:var(--rubric-soft);color:var(--rubric);display:grid;place-items:center;flex:none}
+.hc-ic svg{width:20px;height:20px}
+.hc-txt{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.hc-k{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft)}
+.hc-t{font-family:var(--display);font-size:22px;font-weight:600;line-height:1.1}
+.hc-m{font-size:13px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hc-go{color:var(--rubric);flex:none}.hc-go svg{width:18px;height:18px;display:block}
+.home-main{padding:22px 20px}
+.home-main .hc-t{font-size:34px}
+.home-main .hc-ic{width:48px;height:48px}.home-main .hc-ic svg{width:24px;height:24px}
+.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+@media (max-width:440px){.home-grid{grid-template-columns:1fr}.home-mark{font-size:58px}.home-main .hc-t{font-size:30px}}
+.home-last{margin-top:30px;padding:16px 0 0;border-top:1px solid var(--rule);display:block;width:100%;text-align:left;background:none;border-left:0;border-right:0;border-bottom:0;cursor:pointer;color:inherit}
+.home-last .hc-k{display:block;margin-bottom:6px}
+.home-last q{font-family:var(--body);font-size:16px;line-height:1.55;quotes:"“" "”"}
+.home-last q:lang(ru){quotes:"«" "»"}
+.home-last cite{display:block;font-style:normal;font-size:12.5px;color:var(--ink-soft);margin-top:6px}
+.home-last:hover cite{color:var(--rubric)}
+/* Settings sections */
+.set-h{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);margin:20px 0 0;font-weight:500}
+.set-h:first-child{margin-top:0}
+.set-sel{background:var(--leaf);border:1px solid var(--rule);border-radius:6px;padding:6px 8px;max-width:230px}
 .ref-btn{display:flex;align-items:center;gap:6px;background:var(--leaf);border:1px solid var(--rule);border-radius:6px;padding:7px 12px;cursor:pointer;font-weight:600}
 .ref-btn:hover{border-color:var(--ink-soft)}
 .ref-btn svg{width:12px;height:12px;opacity:.6}
@@ -296,7 +338,7 @@ em.sup{font-style:italic;color:var(--ink-soft)}
 </head>
 <body>
 <header class="bar"><div class="bar-in">
-  <div class="mark">Lect<b>i</b>o</div>
+  <button class="mark" id="homeBtn" aria-label="Home" title="Home">Lect<b>i</b>o</button>
   <button class="ref-btn" id="refBtn" aria-label="Choose book and chapter"><span id="refLabel">John 1</span>
     <svg viewBox="0 0 12 12"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
   <div class="ctl"><label for="verSel">Version</label><select id="verSel"></select></div>
@@ -305,6 +347,26 @@ em.sup{font-style:italic;color:var(--ink-soft)}
   <button class="icon-btn" id="searchBtn" aria-label="Search"><svg viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M13 13l4.5 4.5" stroke="currentColor" stroke-width="1.7"/></svg></button>
   <button class="icon-btn" id="setBtn" aria-label="Reading settings and about"><span style="font-family:var(--display);font-size:19px;font-weight:600;line-height:1">Aa</span></button>
 </div></header>
+
+<section class="home" id="home" hidden aria-label="Home"><div class="home-in">
+  <div class="home-top"><div class="home-mark">Lect<b>i</b>o</div><div class="home-sub">Bible reader</div></div>
+  <button class="home-card home-main" id="homeRead">
+    <span class="hc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 6.5C10 5 7.5 4.5 4 4.5v13c3.5 0 6 .5 8 2 2-1.5 4.5-2 8-2v-13c-3.5 0-6 .5-8 2z"/><path d="M12 6.5v13"/></svg></span>
+    <span class="hc-txt"><span class="hc-k" id="homeReadK">Continue reading</span><span class="hc-t" id="homeRef">John 1</span><span class="hc-m" id="homeVer"></span></span>
+    <span class="hc-go"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 10h11M11 6l4 4-4 4"/></svg></span>
+  </button>
+  <div class="home-grid">
+    <button class="home-card" id="homeSaved">
+      <span class="hc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M7 4h10v16l-5-3.5L7 20z"/></svg></span>
+      <span class="hc-txt"><span class="hc-t">Saved verses</span><span class="hc-m" id="homeSavedN">None yet</span></span>
+    </button>
+    <button class="home-card" id="homeSet">
+      <span class="hc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></svg></span>
+      <span class="hc-txt"><span class="hc-t">Settings</span><span class="hc-m">Theme, language, version</span></span>
+    </button>
+  </div>
+  <button class="home-last" id="homeLast" hidden><span class="hc-k">Last saved</span><q id="homeLastT"></q><cite id="homeLastR"></cite></button>
+</div></section>
 
 <main><article class="page" id="page"><div class="loading">Opening the text…</div></article></main>
 
@@ -334,17 +396,24 @@ em.sup{font-style:italic;color:var(--ink-soft)}
   <div class="sheet-head"><input class="search-in" id="searchIn" type="search" placeholder="Words, a reference (John 3:16) or a Strong's number (G25)" autocomplete="off"><button class="icon-btn" data-close aria-label="Close">✕</button></div>
   <div class="sheet-body" id="searchBody"></div></div></div>
 
-<div class="scrim" id="setSheet" hidden><div class="sheet" role="dialog" aria-label="Reading settings" style="max-width:520px">
-  <div class="sheet-head"><h2>Reading</h2><button class="icon-btn" data-close aria-label="Close">✕</button></div>
+<div class="scrim" id="setSheet" hidden><div class="sheet" role="dialog" aria-label="Settings" style="max-width:520px">
+  <div class="sheet-head"><h2>Settings</h2><button class="icon-btn" data-close aria-label="Close">✕</button></div>
   <div class="sheet-body">
+    <h3 class="set-h">Appearance</h3>
+    <div class="set-row"><span>Theme</span><div class="seg" id="themeSeg"><button data-t="system">Auto</button><button data-t="light">Light</button><button data-t="sepia">Sepia</button><button data-t="dark">Dark</button></div></div>
     <div class="set-row"><span>Text size</span><div class="seg" id="sizeSeg"><button data-s="16">A−</button><button data-s="19">A</button><button data-s="22">A+</button><button data-s="26">A++</button></div></div>
+    <h3 class="set-h">Bible</h3>
+    <div class="set-row"><span>Language</span><select class="set-sel" id="defLangSel" aria-label="Bible language"></select></div>
+    <div class="set-row"><span>Default version<br><small class="muted">the Bible opens in this version</small></span><select class="set-sel" id="defVerSel" aria-label="Default version"></select></div>
+    <h3 class="set-h">Reading</h3>
     <div class="set-row"><span>Layout</span><div class="seg" id="layoutSeg"><button data-l="flow">Paragraph</button><button data-l="lines">Verse by verse</button></div></div>
     <div class="set-row"><span>Words of Jesus in red</span><div class="seg" id="redSeg"><button data-r="1">On</button><button data-r="0">Off</button></div></div>
     <div class="set-row"><span>Quotation marks<br><small class="muted">added where a version prints none</small></span><div class="seg" id="quoteSeg"><button data-q="1">On</button><button data-q="0">Off</button></div></div>
     <div class="set-row"><span>Supplied words in italics</span><div class="seg" id="italSeg"><button data-i="1">On</button><button data-i="0">Off</button></div></div>
+    <h3 class="set-h">More</h3>
     <div class="set-row" id="offRow" hidden><span>Offline reading<br><small class="muted" id="offNote">Save the selected version on this device</small></span><button id="offBtn" style="background:none;border:1px solid var(--rule);border-radius:6px;padding:6px 12px;cursor:pointer">Save offline</button></div>
     <div class="set-row" id="instRow" hidden><span>Install app<br><small class="muted" id="instNote">Add Lectio to your home screen or desktop</small></span><button id="instBtn" style="background:none;border:1px solid var(--rule);border-radius:6px;padding:6px 12px;cursor:pointer">Install</button></div>
-    <div class="set-row"><span>Highlights</span><button class="tx-btn" id="hlOpen" style="background:none;border:1px solid var(--rule);border-radius:6px;padding:6px 12px;cursor:pointer">View all</button></div>
+    <div class="set-row"><span>Highlights</span><button class="tx-btn" id="hlOpen" style="background:none;border:1px solid var(--rule);border-radius:6px;padding:6px 12px;cursor:pointer">Saved verses</button></div>
     <div class="set-row"><span>Word details panel</span><div class="seg" id="dockSeg"><button data-d="1">Show</button><button data-d="0">Hide</button></div></div>
     <div class="about">
       <p><b>Using it.</b> Tap a verse number to highlight or copy the verse. Highlights are saved to your account, follow the verse into every version, and are listed under Highlights above. ← and → turn chapters, / opens search. Search accepts words, a reference, or a Strong's number such as H430 or G26.</p>
@@ -363,8 +432,8 @@ em.sup{font-style:italic;color:var(--ink-soft)}
 <div class="scrim" id="lexSheet" hidden><div class="sheet" role="dialog" aria-label="Dictionary entry">
   <div class="sheet-head"><h2 id="lexTitle">Dictionary</h2><button class="icon-btn" data-close aria-label="Close">✕</button></div>
   <div class="sheet-body" id="lexSheetBody"></div></div></div>
-<div class="scrim" id="hlSheet" hidden><div class="sheet" role="dialog" aria-label="Highlights">
-  <div class="sheet-head"><h2>Highlights</h2><button class="icon-btn" data-close aria-label="Close">✕</button></div>
+<div class="scrim" id="hlSheet" hidden><div class="sheet" role="dialog" aria-label="Saved verses">
+  <div class="sheet-head"><h2>Saved verses</h2><button class="icon-btn" data-close aria-label="Close">✕</button></div>
   <div class="sheet-body" id="hlBody"></div></div></div>
 
 <div class="vmenu" id="vmenu" hidden role="menu" aria-label="Verse actions"></div>
@@ -422,6 +491,7 @@ const store={get(k,d){try{const v=localStorage.getItem("lectio."+k);return v==nu
 let S={ver:store.get("ver","KJV"),par:store.get("par2","ORIG"),book:store.get("book","John"),ch:store.get("ch",1),
        size:store.get("size",19),layout:store.get("layout","flow"),ital:store.get("ital",1),dockOn:store.get("dock",1),red:store.get("red",1),quotes:store.get("quotes",1),hl:null};
 function vinfo(id){return id==="ORIG"?ORIG:V.find(v=>v.id===id)}
+{const dv=store.get("defVer",null);if(dv&&vinfo(dv)&&dv!=="ORIG")S.ver=dv}   // the Bible opens in the default version
 if(!vinfo(S.ver)||S.ver==="ORIG")S.ver="KJV";
 if(S.par&&!vinfo(S.par))S.par="ORIG";
 
@@ -737,7 +807,7 @@ async function render(){
   if(next)$("#nextBtn").onclick=()=>go(next[0],next[1]);
   S._prev=prev;S._next=next;
   store.set("book",S.book);store.set("ch",S.ch);
-  try{history.replaceState(null,"","#"+ALLBOOKS.indexOf(S.book)+"."+S.ch)}catch(e){}
+  if(!atHome())try{history.replaceState(history.state,"","#"+ALLBOOKS.indexOf(S.book)+"."+S.ch)}catch(e){}
   if(S.hl){const el=page.querySelector('[data-v="'+S.hl+'"]');if(el)el.scrollIntoView({block:"center"})}
   applyHighlights();$("#vmenu").hidden=true;
   updateDock(PROT.indexOf(S.book)>=0);
@@ -951,7 +1021,7 @@ function applyHighlights(){
       const next={};snap.docs.forEach(d=>{const x=d.data();if(x&&x.k&&x.c)next[x.k]={c:x.c,t:x.t||0}});
       // carry this browser's earlier highlights into the account once
       if(first){first=false;for(const [k,v] of Object.entries(HL))if(!next[k]){next[k]=v;hlCol.doc("h"+k.replace(/\./g,"_")).set({k,c:v.c,t:v.t||Date.now()}).catch(()=>{})}}
-      HL=next;store.set("hl",HL);applyHighlights();if(!$("#hlSheet").hidden)showHighlights();
+      HL=next;store.set("hl",HL);applyHighlights();if(!$("#hlSheet").hidden)showHighlights();if(!$("#home").hidden)refreshHome();
     },()=>{});
   }catch(e){}
 })();
@@ -999,7 +1069,7 @@ async function showHighlights(){
 function bindHl(){
   const body=$("#hlBody");
   body.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{hlFilter=b.dataset.f;showHighlights()});
-  body.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{const [n,c,v]=b.dataset.go.split("|");closeSheets();go(n,+c,+v)});
+  body.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{const [n,c,v]=b.dataset.go.split("|");closeSheets();showReader(true);go(n,+c,+v)});
 }
 $("#hlOpen").onclick=()=>{closeSheets();openSheet("#hlSheet");showHighlights()};
 
@@ -1174,9 +1244,77 @@ $("#redSeg").onclick=e=>{const b=e.target.closest("button");if(!b)return;S.red=+
 $("#quoteSeg").onclick=e=>{const b=e.target.closest("button");if(!b)return;S.quotes=+b.dataset.q;store.set("quotes",S.quotes);syncSettings();render()};
 $("#setBtn").onclick=()=>openSheet("#setSheet");
 
+/* ---------- theme, language and default version ---------- */
+const THEME_META=[...document.querySelectorAll('meta[name="theme-color"]')].map(m=>[m,m.content]);
+function applyTheme(t){
+  const r=document.documentElement;if(t==="light"||t==="dark"||t==="sepia")r.dataset.theme=t;else delete r.dataset.theme;
+  const paper=getComputedStyle(r).getPropertyValue("--paper").trim();
+  THEME_META.forEach(([m,c])=>m.content=(t==="system"||!t)?c:paper);
+  $("#themeSeg").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.t===(t||"system")));
+}
+$("#themeSeg").onclick=e=>{const b=e.target.closest("button");if(!b)return;store.set("theme",b.dataset.t);applyTheme(b.dataset.t)};
+const LANGS=[["en","English"],["ru","Русский"],["sn","ChiShona"],["orig","Hebrew and Greek"]];
+function langOf(v){return v.orig?"orig":v.lang}
+function defLang(){const l=store.get("defLang",null);return LANGS.some(x=>x[0]===l)?l:langOf(vinfo(store.get("defVer",S.ver))||vinfo(S.ver))}
+function fillDefaults(){
+  const L=defLang();
+  $("#defLangSel").innerHTML=LANGS.map(([k,n])=>'<option value="'+k+'">'+esc(n)+'</option>').join("");$("#defLangSel").value=L;
+  const list=V.filter(v=>langOf(v)===L);
+  let dv=store.get("defVer",null);if(!dv||!list.some(v=>v.id===dv))dv=null;
+  $("#defVerSel").innerHTML=(dv?'':'<option value="">Last version used</option>')+list.map(v=>'<option value="'+v.id+'">'+esc(v.short)+' — '+esc(v.name)+'</option>').join("");
+  $("#defVerSel").value=dv||"";
+}
+function setVersion(id){if(!vinfo(id)||id===S.ver)return;const old=S.ver;S.ver=id;S.ch=mapCh(S.book,S.ch,old,S.ver);if(S.par===S.ver)S.par="";store.set("ver",S.ver);store.set("par2",S.par);fillSelects();render();if(!$("#home").hidden)refreshHome()}
+$("#defLangSel").onchange=e=>{
+  const L=e.target.value;store.set("defLang",L);
+  const first={en:"KJV",ru:"RusSynodal",sn:"Shona",orig:PROT.indexOf(S.book)>=NT_START?"GRK":"HEB"}[L]||V.find(v=>langOf(v)===L).id;
+  store.set("defVer",first);fillDefaults();setVersion(first);toast("The Bible now opens in "+vinfo(first).short);
+};
+$("#defVerSel").onchange=e=>{const id=e.target.value;if(!id)return;store.set("defVer",id);fillDefaults();setVersion(id);toast("The Bible now opens in "+vinfo(id).short)};
+
+/* ---------- home ---------- */
+async function refreshHome(){
+  const vi=vinfo(S.ver);
+  $("#homeRef").textContent=bookLabel(S.book)+" "+S.ch;
+  $("#homeVer").textContent=vi?vi.name:"";
+  const keys=Object.keys(HL),n=keys.length;
+  $("#homeSavedN").textContent=n?(n===1?"1 verse":n+" verses"):"None yet";
+  const last=keys.map(k=>[k,HL[k]]).sort((a,b)=>(b[1].t||0)-(a[1].t||0))[0];
+  if(!last){$("#homeLast").hidden=true;return}
+  const [bi,c,v]=last[0].split(".").map(Number),book=ALLBOOKS[bi];if(!book){$("#homeLast").hidden=true;return}
+  try{
+    const d=await loadVer(S.ver);if(!d||d.map[book]==null){$("#homeLast").hidden=true;return}
+    const [nc,nv]=fromK(S.ver,book,c,v)[0]||[c,v];const vv=await getChapter(S.ver,book,nc);const t=vv&&vv[nv-1]?verseText(vv[nv-1]):"";
+    if(!t){$("#homeLast").hidden=true;return}
+    const q=$("#homeLastT");q.textContent=t.length>240?t.slice(0,240).replace(/\s+\S*$/,"")+"…":t;
+    q.setAttribute("lang",vi.lang==="ru"?"ru":vi.lang==="he"?"he":vi.lang==="el"?"el":"en");if(vi.rtl)q.setAttribute("dir","rtl");else q.removeAttribute("dir");
+    $("#homeLastR").textContent=bookLabel(book)+" "+nc+":"+nv+" · "+vi.short;
+    $("#homeLast").dataset.go=book+"|"+nc+"|"+nv;$("#homeLast").hidden=false;
+  }catch(e){$("#homeLast").hidden=true}
+}
+function atHome(){return document.body.classList.contains("at-home")}
+function showHome(push){
+  if(atHome())return;
+  closeSheets();$("#vmenu").hidden=true;$("#pop").hidden=true;unpin();
+  document.body.classList.add("at-home");$("#home").hidden=false;window.scrollTo(0,0);refreshHome();
+  if(push)try{history.pushState({home:1},"",location.pathname+location.search)}catch(e){}
+}
+function showReader(push){
+  if(!atHome())return;
+  document.body.classList.remove("at-home");$("#home").hidden=true;
+  if(push)try{history.pushState({read:1},"","#"+ALLBOOKS.indexOf(S.book)+"."+S.ch)}catch(e){}
+  sizeBar();updateDock(PROT.indexOf(S.book)>=0);window.scrollTo(0,0);
+}
+window.addEventListener("popstate",()=>{if(atHome())showReader(false);else showHome(false)});
+$("#homeRead").onclick=()=>showReader(true);
+$("#homeSaved").onclick=()=>{openSheet("#hlSheet");showHighlights()};
+$("#homeSet").onclick=()=>openSheet("#setSheet");
+$("#homeLast").onclick=()=>{const g=$("#homeLast").dataset.go;if(!g)return;const [b,c,v]=g.split("|");showReader(true);go(b,+c,+v)};
+$("#homeBtn").onclick=()=>{if(history.state&&history.state.read)history.back();else showHome(true)};
+
 document.addEventListener("keydown",e=>{
   if(e.key==="Escape"){if(!$("#vmenu").hidden){$("#vmenu").hidden=true;return}if(!$("#pop").hidden){$("#pop").hidden=true;return}if(document.querySelector(".scrim:not([hidden])"))return closeSheets();return unpin()}
-  if(e.target.matches("input,select,textarea")||document.querySelector(".scrim:not([hidden])"))return;
+  if(e.target.matches("input,select,textarea")||document.querySelector(".scrim:not([hidden])")||atHome())return;
   if(e.key==="ArrowLeft"&&S._prev)go(...S._prev);
   if(e.key==="ArrowRight"&&S._next)go(...S._next);
   if(e.key==="/"){e.preventDefault();$("#searchBtn").click()}
@@ -1216,6 +1354,8 @@ if("serviceWorker" in navigator&&(location.protocol==="https:"||location.hostnam
   const ios=/iphone|ipad|ipod/i.test(navigator.userAgent),standalone=window.matchMedia("(display-mode: standalone)").matches||navigator.standalone;
   if(ios&&!standalone){$("#instRow").hidden=false;$("#instBtn").hidden=true;$("#instNote").textContent="In Safari, tap Share, then “Add to Home Screen”"}
 }
+applyTheme(store.get("theme","system"));fillDefaults();
+if(!/^#\d+\.\d+$/.test(location.hash)){document.body.classList.add("at-home");$("#home").hidden=false;refreshHome()}
 </script>
 
 </body>
