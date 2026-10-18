@@ -77,9 +77,19 @@ main{max-width:1180px;margin:0 auto;padding-block:28px calc(64px + var(--dock));
 .ext details summary{cursor:pointer;width:max-content;color:var(--ink-soft)}
 .ext details[open] summary{margin-bottom:6px}
 
-.flow p{margin:0 0 .2em}
-h3.sect{font-family:var(--display);font-size:1.15em;font-weight:600;margin:1.1em 0 .3em;color:var(--ink);line-height:1.25}
+.flow p{margin:0 0 .55em}
+h3.sect{font-family:var(--display);font-size:1.2em;font-weight:600;margin:1.3em 0 .35em;color:var(--ink);line-height:1.25;text-wrap:balance}
 h3.sect:first-child{margin-top:0}
+h3.sect.l0{font-family:var(--ui);font-size:.7em;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--rubric);text-align:center;margin:1.4em 0 .3em}
+h3.sect.l2{font-size:1.05em;font-style:italic;font-weight:500;margin:1em 0 .25em}
+h3.sect.l4{font-family:var(--ui);font-size:.68em;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin:.9em 0 .15em}
+.sect-x{font-family:var(--ui);font-size:.66em;line-height:1.5;color:var(--ink-soft);margin:-.2em 0 .6em}
+.xref{background:none;border:none;padding:0;font:inherit;color:inherit;cursor:pointer;text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:2px}
+.xref:hover{color:var(--rubric);text-decoration-color:currentColor}
+.sect-in{display:block;font-family:var(--display);font-style:italic;font-size:1.05em;font-weight:500;margin:.45em 0 .1em}
+.ps-title{display:block;font-style:italic;font-size:.88em;line-height:1.55;color:var(--ink-soft);margin:.1em 0 .3em}
+.lines .v.pstart{margin-top:.6em}
+.avn{font-family:var(--ui);font-size:.6em;font-weight:600;color:var(--ink-soft);vertical-align:.55em;margin:0 .25em 0 .1em;font-variant-numeric:tabular-nums}
 .v{border-radius:3px;transition:background .15s}
 .v.hl{background:var(--mark)}
 .vn{font-family:var(--ui);font-size:.6em;font-weight:600;color:var(--rubric);vertical-align:.55em;margin:0 .25em 0 .1em;font-variant-numeric:tabular-nums;cursor:pointer;padding:0 .1em}
@@ -105,12 +115,19 @@ em.sup{font-style:italic;color:var(--ink-soft)}
 .row>div{min-width:0}
 .row .alt{color:var(--ink-soft)}
 .row .alt .w{color:var(--ink)}
-.row.sect-row{display:block;padding:0}
+.row.sect-row{padding:.15em 6px 0}
+.row.sect-row>div:empty::after{content:"\00a0"}
+.row.sect-row h3.sect{margin-top:.95em}
+.row.pstart{margin-top:.45em}
 .row .tag{display:none}
 @media (max-width:700px){
   .cols-head{display:none}
   .row{grid-template-columns:1fr;gap:4px;padding:8px 6px;border-bottom:1px solid var(--rule);border-radius:0}
   .row .tag{display:inline;font-family:var(--ui);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-right:6px}
+  .row.sect-row{border-bottom:none;padding-bottom:0}
+  .row.sect-row>div:empty{display:none}
+  .row.sect-row>div.alt:not(:empty){opacity:.8}
+  .row.pstart{margin-top:0}
   .chnum{font-size:64px}.bookname{font-size:25px}
 }
 
@@ -292,6 +309,7 @@ em.sup{font-style:italic;color:var(--ink-soft)}
     <div class="set-row"><span>Text size</span><div class="seg" id="sizeSeg"><button data-s="16">A−</button><button data-s="19">A</button><button data-s="22">A+</button><button data-s="26">A++</button></div></div>
     <div class="set-row"><span>Layout</span><div class="seg" id="layoutSeg"><button data-l="flow">Paragraph</button><button data-l="lines">Verse by verse</button></div></div>
     <div class="set-row"><span>Words of Jesus in red</span><div class="seg" id="redSeg"><button data-r="1">On</button><button data-r="0">Off</button></div></div>
+    <div class="set-row"><span>Quotation marks<br><small class="muted">added where a version prints none</small></span><div class="seg" id="quoteSeg"><button data-q="1">On</button><button data-q="0">Off</button></div></div>
     <div class="set-row"><span>Supplied words in italics</span><div class="seg" id="italSeg"><button data-i="1">On</button><button data-i="0">Off</button></div></div>
     <div class="set-row" id="offRow" hidden><span>Offline reading<br><small class="muted" id="offNote">Save the selected version on this device</small></span><button id="offBtn" style="background:none;border:1px solid var(--rule);border-radius:6px;padding:6px 12px;cursor:pointer">Save offline</button></div>
     <div class="set-row" id="instRow" hidden><span>Install app<br><small class="muted" id="instNote">Add Lectio to your home screen or desktop</small></span><button id="instBtn" style="background:none;border:1px solid var(--rule);border-radius:6px;padding:6px 12px;cursor:pointer">Install</button></div>
@@ -300,10 +318,12 @@ em.sup{font-style:italic;color:var(--ink-soft)}
     <div class="about">
       <p><b>Using it.</b> Tap a verse number to highlight or copy the verse. Highlights are saved to your account, follow the verse into every version, and are listed under Highlights above. ← and → turn chapters, / opens search. Search accepts words, a reference, or a Strong's number such as H430 or G26.</p>
       <p><b>Word links.</b> Pointing at a word in either column lights up the matching word in the other. The KJV, the Hebrew Old Testament and the four Greek New Testaments are hand-tagged with Strong's numbers, so their links are exact. Every other version, Russian and Shona included, is matched statistically: each word is paired with the Hebrew or Greek word it most often appears with across the whole Bible. English words are first matched against the English gloss of each Hebrew or Greek word in the verse. Rarer words are then matched by weaker associations, and finally by position in the verse. Tested against the KJV's hand tags, almost every content word gets a match (96%), and about 83% of matches are right. Those matches are marked "≈ approximate" in the details strip. Common small words (the, of, and; и, в, на) are not linked.</p>
-      <p><b>Words of Jesus.</b> The KJV and the WEB (Yahweh edition) mark Jesus' words in their own text. Other versions take the marking from the KJV: a verse that is wholly Jesus' words turns red as a whole, and in a verse that is partly his words, the words linked to the red Greek words turn red, so those can be approximate. Turn it off under Words of Jesus in red.</p>
+      <p><b>Words of Jesus.</b> The KJV and the WEB (Yahweh edition) mark Jesus' words in their own text. In every other version the red runs exactly from the opening to the closing quotation mark of what Jesus says, so the narrator's words around it ("He looked at him and said") stay black. Which quotations are his comes from the WEB; in the Greek texts each word is red when the KJV word with the same Strong's number is. Turn it off under Words of Jesus in red.</p>
+      <p><b>Quotation marks.</b> The KJV, ASV, Darby, Webster, UKJV, Geneva, Douay-Rheims, Tyndale, BBE, Brenton, the Synodal, Church Slavonic and Makarius print no quotation marks, so Lectio adds them where someone speaks, following the speech in the WEB matched word by word (Russian through the Hebrew and Greek words behind each word, with «…» and „…“). Where a match is unsure, no mark is added. YLT, JPS and NHEB-ME print straight marks, shown as typographic ones. The added marks can be turned off under Quotation marks.</p>
+      <p><b>Headings.</b> Section headings and paragraphs follow the BSB in every version (in Russian for the Synodal, Church Slavonic and Makarius), with links to parallel passages. Psalm titles are set apart from verse 1.</p>
       <p><b>Footnotes.</b> The KJV translators' margin notes, and the footnotes of the BSB and the WEB (Yahweh edition), appear as red letters in the text and in a list below each chapter.</p>
       <p><b>Greek editions.</b> NA28, SBL, Textus Receptus and Byzantine each use that edition's choice of words, drawn from the STEPBible amalgamated text. Spelling and word order follow the STEPBible base text, so they can differ slightly from the printed editions.</p>
-      <p><b>Numbering.</b> The Hebrew text follows English verse numbers. The Synodal and Church Slavonic use Septuagint psalm numbers (Psalm 23 is 22), and Compare lines these up. Some eBible texts place Malachi 4 at Malachi 3:19–24.</p>
+      <p><b>Numbering.</b> Each version keeps its own chapter and verse numbers: the Synodal and Church Slavonic use Septuagint psalm numbers (Psalm 23 is 22) and count psalm titles as verses, JPS follows the Hebrew Bible (Malachi 4 is Malachi 3:19–24), Douay-Rheims the Vulgate and Brenton the Septuagint. Compare lines the two versions up verse by verse and shows the other version's own verse numbers where they differ. Highlights stay on the same verse in every version.</p>
       <p><b>Licences.</b> Public domain: KJV, WEB, BSB, ASV, YLT, Darby, Webster, Geneva, Douay-Rheims, Tyndale, BBE, Brenton, UKJV, OEB, NHEB-ME, WMB, JPS 1917, Synodal, Church Slavonic, Makarius. CC BY-SA 4.0: LSV (Covenant Press), FBV, Shona (© 2017 Biblica). Hebrew and Greek tagging, lexicons and grammar: STEPBible.org / Tyndale House, CC BY 4.0, reformatted for this reader (source: github.com/STEPBible). NASB, NKJV, ESV, CJB, NIV, NLT, CSB, AMP, the modern Russian translations and all Xitsonga Bibles are under copyright, so they open on Bible.com.</p>
       <p>Text sources: scrollmapper/bible_databases, BibleNLP/ebible, seven1m/open-bibles, STEPBible-Data.</p>
     </div>
@@ -366,7 +386,7 @@ const $=s=>document.querySelector(s);
 const store={get(k,d){try{const v=localStorage.getItem("lectio."+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
              set(k,v){try{localStorage.setItem("lectio."+k,JSON.stringify(v))}catch(e){}}};
 let S={ver:store.get("ver","KJV"),par:store.get("par2","ORIG"),book:store.get("book","John"),ch:store.get("ch",1),
-       size:store.get("size",19),layout:store.get("layout","flow"),ital:store.get("ital",1),dockOn:store.get("dock",1),red:store.get("red",1),hl:null};
+       size:store.get("size",19),layout:store.get("layout","flow"),ital:store.get("ital",1),dockOn:store.get("dock",1),red:store.get("red",1),quotes:store.get("quotes",1),hl:null};
 function vinfo(id){return id==="ORIG"?ORIG:V.find(v=>v.id===id)}
 if(!vinfo(S.ver)||S.ver==="ORIG")S.ver="KJV";
 if(S.par&&!vinfo(S.par))S.par="ORIG";
@@ -410,12 +430,35 @@ function verseText(v){
     else if(isOrigTok(t))out+=(out&&!/־$/.test(out)?" ":"")+t[0];
     else if(Array.isArray(t))out+=t[0];
     else if(t&&t.br)out+=" ";
+    else if(t&&t.q&&S.quotes)out+=t.q;
+    else if(t&&t.d===0)out+=" ";
   }
   return plain(out).replace(/\s+/g," ").trim();
 }
-function hebToLxx(n){if(n<=8)return n;if(n<=10)return 9;if(n<=113)return n-1;if(n<=115)return 113;if(n===116)return 114;if(n<=146)return n-1;if(n===147)return 146;return n}
-function lxxToHeb(n){if(n<=8)return n;if(n===9)return 9;if(n<=112)return n+1;if(n===113)return 114;if(n<=115)return 116;if(n<=145)return n+1;if(n<=147)return 147;return n}
-function mapCh(book,ch,from,to){if(book!=="Psalms")return ch;const a=!!vinfo(from).lxx,b=!!vinfo(to).lxx;if(a===b)return ch;return a?lxxToHeb(ch):hebToLxx(ch)}
+/* ---------- versification ----------
+   Every version keeps its own chapter and verse numbers. data/vrs.json says which numbering each
+   book of each version follows and how its verses map to the English (KJV) numbering, so Compare,
+   highlights and links line up verse by verse. */
+let VRS={ver:{},map:{},rev:{}},VRSP=null;
+function loadVrs(){
+  return VRSP||(VRSP=fetchJSON("data/vrs.json").then(d=>{
+    const rev={};
+    for(const [sys,books] of Object.entries(d.map||{})){const R=rev[sys]={};
+      for(const [b,t] of Object.entries(books)){const r=R[b]={};
+        for(const [k,list] of Object.entries(t)){const [c,v]=k.split(":").map(Number);for(const [kc,kv] of list)(r[kc+":"+kv]||(r[kc+":"+kv]=[])).push([c,v])}}}
+    VRS={ver:d.ver||{},map:d.map||{},rev};return VRS}).catch(()=>VRS));
+}
+function dataId(id){const v=vinfo(id);return v&&v.dir==="KJVS"?"KJVS":id}
+function vsys(id,book){const m=VRS.ver[dataId(id)];return (m&&m[book])||"kjv"}
+function toK(id,book,c,v){const s=vsys(id,book);if(s==="kjv")return [[c,v]];const t=VRS.map[s]&&VRS.map[s][book];return (t&&t[c+":"+v])||[[c,v]]}
+function fromK(id,book,c,v){
+  const s=vsys(id,book);if(s==="kjv")return [[c,v]];
+  const r=VRS.rev[s]&&VRS.rev[s][book],t=VRS.map[s]&&VRS.map[s][book];
+  const hit=r&&r[c+":"+v];if(hit)return hit;
+  return t&&t[c+":"+v]?[]:[[c,v]];
+}
+function kjvRef(id,book,c,v){return toK(id,book,c,v)[0]}
+function mapCh(book,ch,from,to){if(from===to||vsys(from,book)===vsys(to,book))return ch;const k=toK(from,book,ch,2)[0];const n=fromK(to,book,k[0],k[1])[0];return n?n[0]:k[0]}
 function orderedBooks(d){
   const have=new Set(d.books.map(b=>b.n));
   const ot=PROT.slice(0,NT_START).filter(n=>have.has(n)),nt=PROT.slice(NT_START).filter(n=>have.has(n));
@@ -475,158 +518,173 @@ function alignWords(S,stems,rev,toks,lang){
     if(best){out[i]=best[1];used[best[1]]=1}});
   return out;
 }
-async function prepApprox(verId,book,colCh){
+async function prepApprox(verId,book,chapters){
   const vi=vinfo(verId);if(vi.tagged||PROT.indexOf(book)<0||!S.dockOn)return null;
   const al=await loadAlign(verId);if(!al)return null;
-  const ech=mapCh(book,colCh,verId,"KJV");
-  const nt=PROT.indexOf(book)>=NT_START;
-  const refs=await Promise.all((nt?["GRK","TR"]:["HEB"]).map(id=>getChapter(id,book,ech).catch(()=>null)));
-  return {rev:al.r,lang:al.lang,ech,
-    toks(v){const ch=refs[0];const vv=ch&&ch[v-1];return Array.isArray(vv)?vv.filter(isOrigTok):[]},
-    strongs(v){const S=new Set();for(const ch of refs){const vv=ch&&ch[v-1];if(Array.isArray(vv))for(const t of vv)if(isOrigTok(t))for(const x of t[1].split(" "))if(x&&!/^H9\d{3}$/.test(x))S.add(x)}return S}};
+  const nt=PROT.indexOf(book)>=NT_START,ids=nt?["GRK","TR"]:["HEB"];
+  // the original-language verses behind each native verse (English numbering)
+  const kch=new Set();for(const [c,n] of chapters)for(let v=1;v<=n;v++)for(const k of toK(verId,book,c,v))kch.add(k[0]);
+  const refs={};
+  await Promise.all(ids.flatMap(id=>[...kch].map(async c=>{refs[id+"|"+c]=await getChapter(id,book,c).catch(()=>null)})));
+  const orig=(id,c,v)=>toK(verId,book,c,v).map(([kc,kv])=>{const ch=refs[id+"|"+kc];return ch&&ch[kv-1]}).filter(Array.isArray);
+  return {rev:al.r,lang:al.lang,
+    toks(c,v){return orig(ids[0],c,v).flat().filter(isOrigTok)},
+    strongs(c,v){const S_=new Set();for(const id of ids)for(const vv of orig(id,c,v))for(const t of vv)if(isOrigTok(t))for(const x of t[1].split(" "))if(x&&!/^H9\d{3}$/.test(x))S_.add(x);return S_}};
+}
+/* ---------- verse rendering ----------
+   Tokens: strings; [text,strong,morph] (KJV); [surface,strong,translit,gloss,morph,key] (Hebrew/Greek);
+   {f} footnote; {h,l,xr} heading; {p} paragraph start; {d:1}…{d:0} psalm title; {q} quotation mark
+   added by Lectio; {r:1}…{r:0} words of Jesus; {br} line break. */
+function headHTML(t,ver){
+  const lv=t.l==null?1:t.l;
+  let h='<h3 class="sect l'+lv+'">'+esc(t.h)+'</h3>';
+  if(t.xr&&t.xr.length)h+='<div class="sect-x">('+t.xr.map(r=>refLink(r,ver)).join("; ")+')</div>';
+  return h;
+}
+function refLink(r,ver){
+  const [b,c,v,c2,v2]=r,vi=vinfo(ver),ru=vi&&vi.lang==="ru";
+  const a=fromK(ver,b,c,v||1)[0]||[c,v||1];
+  let lbl=(b==="Psalms"&&!ru?"Psalm":bookLabel(b,ver))+" "+a[0];
+  if(v2){const e=fromK(ver,b,c2,v2)[0]||[c2,v2];lbl+=":"+a[1]+(e[0]!==a[0]?"–"+e[0]+":"+e[1]:e[1]!==a[1]?"–"+e[1]:"")}
+  else if(c2&&c2!==c){const e=fromK(ver,b,c2,1)[0]||[c2,1];lbl=(b==="Psalms"&&!ru?"Psalms":bookLabel(b,ver))+" "+a[0]+"–"+e[0]}
+  return '<button class="xref" data-go="'+esc(b)+'|'+a[0]+'|'+(v2?a[1]:"")+'">'+esc(lbl)+'</button>';
 }
 function renderApprox(v,vi,ctx){
   const ap=ctx.ap,re=WORDRE[ap.lang];
   const segs=typeof v==="string"?[v]:v;
   const stems=[];
   for(const t of segs)if(typeof t==="string"){re.lastIndex=0;let m;while((m=re.exec(t)))stems.push(stem(m[0],ap.lang))}
-  const al=alignWords(ap.strongs(ctx.v),stems,ap.rev,ap.toks(ctx.v),ap.lang);
-  const own=hasOwnRed(v),info=!own&&S.red&&ctx.red?ctx.red[ctx.v-1]:null;
-  const redW=info&&!info.all?redIndices(i=>al[i]?[al[i]]:null,stems.length,info):null;
-  let body="",heads="",wi=0,ital=false,inRed=false;
+  const al=alignWords(ap.strongs(ctx.ch,ctx.v),stems,ap.rev,ap.toks(ctx.ch,ctx.v),ap.lang);
+  let body="",heads="",title=null,tb="",wi=0,ital=false,inRed=false,para=false;
+  const add=x=>{if(title!==null)title+=x;else body+=x};
   const text=t=>{let o="";for(const ch of t){if(ch==="["){if(S.ital&&!ital){o+='<em class="sup">';ital=true}}else if(ch==="]"){if(ital){o+='</em>';ital=false}}else o+=esc(ch)}return o};
   for(const t of segs){
     if(typeof t==="string"){
       re.lastIndex=0;let m,last=0;
       while((m=re.exec(t))){
-        body+=text(t.slice(last,m.index));
-        const s=al[wi],rc=redW&&redW[wi]?" wj":"";
-        if(s){const id=REG.push({tok:[m[0],s],vi,ctx:{...ctx},approx:1})-1;body+='<span class="w ap'+rc+'" data-s="'+s+'" data-r="'+id+'">'+esc(m[0])+'</span>'}
-        else body+=rc?'<span class="wj">'+esc(m[0])+'</span>':esc(m[0]);
+        add(text(t.slice(last,m.index)));
+        const s=al[wi];
+        if(s){const id=REG.push({tok:[m[0],s],vi,ctx:{...ctx},approx:1})-1;add('<span class="w ap" data-s="'+s+'" data-r="'+id+'">'+esc(m[0])+'</span>')}
+        else add(esc(m[0]));
         wi++;last=m.index+m[0].length;
       }
-      body+=text(t.slice(last));continue}
-    if(t&&t.f){ctx.notes.push({v:ctx.v,t:t.f});const L=noteLetter(ctx.notes.length-1);
-      body+='<button class="fn" data-note="'+esc(t.f)+'" data-k="'+ctx.col+'-'+ctx.notes.length+'" aria-label="Footnote '+L+'">'+L+'</button>';continue}
-    if(t&&t.h){heads+=t.h;continue}
-    if(t&&t.br){body+="<br>";continue}
-    if(t&&t.r!==undefined){if(!S.red)continue;if(ital){body+="</em>";ital=false}if(t.r===1&&!inRed){body+='<span class="wj">';inRed=true}else if(t.r===0&&inRed){body+='</span>';inRed=false}continue}
+      add(text(t.slice(last)));continue}
+    if(!t)continue;
+    if(t.f){ctx.notes.push({v:ctx.v,t:t.f});const L=noteLetter(ctx.notes.length-1);
+      add('<button class="fn" data-note="'+esc(t.f)+'" data-k="'+ctx.col+'-'+ctx.notes.length+'" aria-label="Footnote '+L+'">'+L+'</button>');continue}
+    if(t.h){if(body&&title===null)add('<span class="sect-in">'+esc(t.h)+'</span>');else heads+=headHTML(t,ctx.ver);continue}
+    if(t.p){if(!body&&title===null)para=true;continue}
+    if(t.d===1){title="";continue}
+    if(t.d===0){if(ital){title+="</em>";ital=false}tb=title;title=null;continue}
+    if(t.q){if(S.quotes)add(esc(t.q));continue}
+    if(t.br){if(body)add("<br>");continue}
+    if(t.r!==undefined){if(!S.red)continue;if(ital){add("</em>");ital=false}if(t.r===1&&!inRed){add('<span class="wj">');inRed=true}else if(t.r===0&&inRed){add('</span>');inRed=false}continue}
   }
-  if(ital)body+="</em>";
-  if(inRed)body+="</span>";
-  if(info&&info.all&&!redW)body='<span class="wj">'+body+'</span>';
-  return {h:heads,body};
+  if(ital)add("</em>");
+  if(inRed)add("</span>");
+  return {h:heads,body,p:para,title:tb||(title||"")};
 }
-
-/* ---------- words of Jesus (red letters) ---------- */
-// The KJV and WEB mark Jesus' words themselves. Other versions borrow the KJV's marking for the same verse:
-// a fully red verse turns red as a whole; in a partly red verse, words linked to Greek words that are red in the KJV turn red.
-async function redInfo(book,ech){
-  if(!S.red||PROT.indexOf(book)<NT_START)return null;
-  const ch=await getChapter("KJV",book,ech).catch(()=>null);if(!ch)return null;
-  return ch.map(v=>{
-    if(!Array.isArray(v))return null;
-    let red=false,any=false,allRed=true,first=null,lastRed=false;const R=new Set(),P=new Set();
-    for(const t of v){
-      if(t&&t.r===1){red=true;any=true;continue}if(t&&t.r===0){red=false;continue}
-      const content=Array.isArray(t)?/[A-Za-z]/.test(t[0]):(typeof t==="string"&&/[A-Za-z]{2}/.test(t));
-      if(Array.isArray(t))for(const s of linkSet(t[1]))(red?R:P).add(s);
-      if(content){if(first===null)first=red;lastRed=red;if(!red)allRed=false}
-    }
-    if(!any)return null;
-    return {all:allRed,red:new Set([...R].filter(x=>!P.has(x))),plain:new Set([...P].filter(x=>!R.has(x))),fromStart:!!first,toEnd:lastRed};
-  });
-}
-function hasOwnRed(v){return Array.isArray(v)&&v.some(t=>t&&t.r!==undefined)}
-// Red stretch in another version: from the first to the last word linked to a red Greek word
-// (or from the verse start / to the verse end when the KJV's quote does), skipping narrator words.
-function redIndices(strongsAt,n,info){
-  const red=new Array(n).fill(false);if(!info||!n)return red;
-  if(info.all)return red.fill(true);
-  const isR=[],isP=[];
-  for(let i=0;i<n;i++){const s=strongsAt(i)||[];isR[i]=s.some(x=>info.red.has(x));isP[i]=s.some(x=>info.plain.has(x))&&!isR[i]}
-  let a=isR.indexOf(true),b=isR.lastIndexOf(true);
-  if(info.fromStart){const fp=isP.indexOf(true);a=0;if(b<0)b=fp<0?n-1:fp-1}
-  if(info.toEnd){const lp=isP.lastIndexOf(true);b=n-1;if(a<0)a=lp<0?0:lp+1}
-  if(a<0||b<a)return red;
-  for(let i=a;i<=b;i++)red[i]=!isP[i];
-  return red;
-}
-
+function noteLetter(i){const a="abcdefghijklmnopqrstuvwxyz";return i<26?a[i]:a[Math.floor(i/26)-1]+a[i%26]}
 /* ---------- rendering ---------- */
 let REG=[];
 function renderTokens(v,vi,ctx){
   if(ctx.ap&&v)return renderApprox(v,vi,ctx);
-  const info=S.red&&ctx.red&&!hasOwnRed(v)?ctx.red[ctx.v-1]:null;
-  if(typeof v==="string")return {h:"",body:info&&info.all?'<span class="wj">'+fmt(v)+'</span>':fmt(v)};
-  const origIdx=[];v.forEach((t,i)=>{if(isOrigTok(t))origIdx.push(i)});
-  const redO=info&&origIdx.length?redIndices(k=>linkSet(v[origIdx[k]][1]),origIdx.length,info):null;
-  const redAt=new Set();if(redO)origIdx.forEach((ix,k)=>{if(redO[k])redAt.add(ix)});
-  let body="",heads="",prevOrig=false,inRed=false,ti=-1;
-  for(const t of v){ti++;
-    if(typeof t==="string"){body+=fmt(t);prevOrig=false;continue}
+  if(typeof v==="string")return {h:"",body:fmt(v),p:false,title:""};
+  let body="",heads="",title=null,tb="",prevOrig=false,inRed=false,para=false;
+  const add=x=>{if(title!==null)title+=x;else body+=x};
+  for(const t of v){
+    if(typeof t==="string"){add(fmt(t));prevOrig=false;continue}
     if(isOrigTok(t)){
       const id=REG.push({tok:t,vi,ctx:{...ctx}})-1;
-      body+=(prevOrig?" ":"")+'<span class="w o'+(redAt.has(ti)?" wj":"")+'" data-s="'+esc(t[1])+'" data-r="'+id+'">'+esc(t[0])+'</span>';
+      add((prevOrig?" ":"")+'<span class="w o" data-s="'+esc(t[1])+'" data-r="'+id+'">'+esc(t[0])+'</span>');
       prevOrig=!/־$/.test(t[0]);continue}
     prevOrig=false;
     if(Array.isArray(t)){
       const id=REG.push({tok:t,vi,ctx:{...ctx}})-1;
-      body+='<span class="w" data-s="'+esc(t[1])+'" data-r="'+id+'">'+fmt(t[0])+'</span>';continue}
+      add('<span class="w" data-s="'+esc(t[1])+'" data-r="'+id+'">'+fmt(t[0])+'</span>');continue}
+    if(!t)continue;
     if(t.f){ctx.notes.push({v:ctx.v,t:t.f});const L=noteLetter(ctx.notes.length-1);
-      body+='<button class="fn" data-note="'+esc(t.f)+'" data-k="'+ctx.col+'-'+ctx.notes.length+'" aria-label="Footnote '+L+'">'+L+'</button>';continue}
-    if(t.h){heads+=t.h;continue}
-    if(t.br){body+="<br>";continue}
-    if(t.r!==undefined){if(!S.red)continue;if(t.r===1&&!inRed){body+='<span class="wj">';inRed=true}else if(t.r===0&&inRed){body+='</span>';inRed=false}continue}
+      add('<button class="fn" data-note="'+esc(t.f)+'" data-k="'+ctx.col+'-'+ctx.notes.length+'" aria-label="Footnote '+L+'">'+L+'</button>');continue}
+    if(t.h){if(body&&title===null)add('<span class="sect-in">'+esc(t.h)+'</span>');else heads+=headHTML(t,ctx.ver);continue}
+    if(t.p){if(!body&&title===null)para=true;continue}
+    if(t.d===1){title="";continue}
+    if(t.d===0){tb=title;title=null;continue}
+    if(t.q){if(S.quotes)add(esc(t.q));continue}
+    if(t.br){if(body)add("<br>");continue}
+    if(t.r!==undefined){if(!S.red)continue;if(t.r===1&&!inRed){add('<span class="wj">');inRed=true}else if(t.r===0&&inRed){add('</span>');inRed=false}continue}
   }
-  if(inRed)body+="</span>";
-  if(info&&info.all&&!origIdx.length)body='<span class="wj">'+body+'</span>';
-  return {h:heads,body};
+  if(inRed)add("</span>");
+  return {h:heads,body,p:para,title:tb||(title||"")};
 }
-function noteLetter(i){const a="abcdefghijklmnopqrstuvwxyz";return i<26?a[i]:a[Math.floor(i/26)-1]+a[i%26]}
+function titleHTML(r){return r.title?'<span class="ps-title">'+r.title.trim()+'</span>':''}
 
 let renderSeq=0;
 async function render(){
   const seq=++renderSeq,page=$("#page");
+  await loadVrs();
   let d;
   try{d=await loadVer(S.ver)}catch(e){page.innerHTML='<div class="loading">Could not load '+esc(vinfo(S.ver).name)+'. Check your connection and reopen the page.</div>';return}
   if(d.map[S.book]==null){const o=orderedBooks(d);S.book=o.all.includes("John")?"John":o.all[0];S.ch=1}
   const bk=d.books[d.map[S.book]];S.ch=Math.min(Math.max(1,S.ch),bk.cn);
   const parId=resolvePar();
   const [verses,pd]=await Promise.all([getChapter(S.ver,S.book,S.ch),parId?loadVer(parId).catch(()=>null):null]);
-  let pv=null,pch=null;
-  if(pd&&pd.map[S.book]!=null){pch=mapCh(S.book,S.ch,S.ver,parId);pv=await getChapter(parId,S.book,pch)||[]}
-  const [apA,apB,redA,redB]=await Promise.all([prepApprox(S.ver,S.book,S.ch).catch(()=>null),pv?prepApprox(parId,S.book,pch).catch(()=>null):null,
-    redInfo(S.book,mapCh(S.book,S.ch,S.ver,"KJV")).catch(()=>null),pv?redInfo(S.book,mapCh(S.book,pch,parId,"KJV")).catch(()=>null):null]);
+  // Compare: the other version's verses behind each verse of this chapter, by verse mapping
+  let rows=null,pchs={},pch=null;
+  if(pd&&pd.map[S.book]!=null){
+    rows=[];const seen=new Set(),need=new Map();
+    verses.forEach((_,i)=>{const list=[];
+      for(const [kc,kv] of toK(S.ver,S.book,S.ch,i+1))for(const n of fromK(parId,S.book,kc,kv)){const key=n[0]+":"+n[1];if(!seen.has(key)){seen.add(key);list.push(n);need.set(n[0],(need.get(n[0])||0)+1)}}
+      rows.push(list)});
+    pch=need.size?[...need.entries()].sort((a,b)=>b[1]-a[1])[0][0]:mapCh(S.book,S.ch,S.ver,parId);
+    const pcn=pd.books[pd.map[S.book]].cn;
+    if(!need.has(pch)&&pch<=pcn)need.set(pch,0);
+    await Promise.all([...need.keys()].filter(c=>c>=1&&c<=pcn).map(async c=>{pchs[c]=await getChapter(parId,S.book,c)||[]}));
+    // verses of the other version's main chapter that no verse here points to go with their neighbour
+    const main=pchs[pch]||[];
+    const inMain=[...seen].filter(k=>+k.split(":")[0]===pch).map(k=>+k.split(":")[1]);
+    const lo=Math.min(...inMain),hi=Math.max(...inMain);
+    main.forEach((t,j)=>{const key=pch+":"+(j+1);if(seen.has(key)||!t||(typeof t==="string"&&!t.trim())||!(j+1>lo&&j+1<hi))return;
+      let at=0;rows.forEach((l,i)=>{if(l.some(([c,v])=>c===pch&&v<j+1))at=i});
+      rows[at].push([pch,j+1]);rows[at].sort((a,b)=>a[0]-b[0]||a[1]-b[1]);seen.add(key)});
+  }
+  const chaptersB=rows?Object.entries(pchs).map(([c,l])=>[+c,l.length]):[];
+  const [apA,apB]=await Promise.all([prepApprox(S.ver,S.book,[[S.ch,verses.length]]).catch(()=>null),rows?prepApprox(parId,S.book,chaptersB).catch(()=>null):null]);
   if(seq!==renderSeq)return;
   const vi=vinfo(S.ver),pvi=parId?vinfo(parId):null;
-  const echA=mapCh(S.book,S.ch,S.ver,"KJV");
   REG=[];
   $("#refLabel").textContent=bookLabel(S.book)+" "+S.ch;
   document.documentElement.lang=vi.lang==="ru"?"ru":"en";
   let h='<div class="head"><div class="chnum">'+S.ch+'</div><div class="head-txt"><div class="bookname">'+esc(bookLabel(S.book))+'</div><div class="vername">'+esc(vi.name)+(pvi?' · '+esc(pvi.name):'')+'</div></div></div>';
   h+=bibleComLinks();
   if(pvi&&pd&&pd.map[S.book]==null)h+='<div class="note">'+esc(bookLabel(S.book))+' is not part of '+esc(pvi.name)+'.</div>';
-  if(pvi&&pv&&pch!==S.ch)h+='<div class="note">Psalm numbering differs: this is '+esc(bookLabel("Psalms",parId))+' '+pch+' in '+esc(pvi.short.replace(/\.$/,""))+'. Verse numbers may be offset by the title line.</div>';
+  if(pvi&&rows&&pch!==S.ch)h+='<div class="note">'+esc(pvi.short)+' numbers this passage differently: it is '+esc(bookLabel(S.book,parId))+' '+pch+' there. Verses are lined up by content, and its own verse numbers are shown beside its text.</div>';
   const notesA=[],notesB=[];
-  if(pv){
+  if(rows){
     page.className="page parallel";
     h+='<div class="cols-head"><div>'+esc(vi.name)+'</div><div>'+esc(pvi.name)+'</div></div>';
-    const n=Math.max(verses.length,pv.length);
-    for(let i=0;i<n;i++){
-      const a=renderTokens(verses[i]||"",vi,{v:i+1,col:"a",notes:notesA,ver:S.ver,book:S.book,ch:S.ch,ech:echA,ap:apA,red:redA});
-      const b=renderTokens(pv[i]||"",pvi,{v:i+1,col:"b",notes:notesB,ver:parId,book:S.book,ch:pch,ech:mapCh(S.book,pch,parId,"KJV"),ap:apB,red:redB});
-      if(a.h||b.h)h+='<div class="row sect-row"><h3 class="sect">'+esc(a.h||b.h)+'</h3></div>';
-      h+='<div class="row'+(S.hl===i+1?' hl':'')+'" data-v="'+(i+1)+'"><div><span class="tag">'+esc(vi.short)+'</span><span class="vn" title="Highlight or copy">'+(i+1)+'</span><span'+langAttr(vi)+'>'+a.body+'</span></div><div class="alt"><span class="tag">'+esc(pvi.short)+'</span><span'+langAttr(pvi)+'>'+b.body+'</span></div></div>';
-    }
+    verses.forEach((t,i)=>{
+      const [kc,kv]=kjvRef(S.ver,S.book,S.ch,i+1);
+      const a=renderTokens(t||"",vi,{v:i+1,col:"a",notes:notesA,ver:S.ver,book:S.book,ch:S.ch,kc,kv,ap:apA});
+      let bh="",bb="",bp=false;
+      rows[i].forEach(([c,v],j)=>{const vv=(pchs[c]||[])[v-1];if(vv==null)return;
+        const [bkc,bkv]=kjvRef(parId,S.book,c,v);
+        const r=renderTokens(vv||"",pvi,{v,col:"b",notes:notesB,ver:parId,book:S.book,ch:c,kc:bkc,kv:bkv,ap:apB});
+        bh+=r.h;if(j===0)bp=r.p;
+        const lbl=(c!==S.ch||v!==i+1)?'<span class="avn">'+(c!==S.ch?c+":"+v:v)+'</span>':'';
+        bb+=(bb?" ":"")+lbl+titleHTML(r)+r.body});
+      if(a.h||bh)h+='<div class="row sect-row"><div>'+a.h+'</div><div class="alt">'+bh+'</div></div>';
+      h+='<div class="row'+(a.p||bp?' pstart':'')+(S.hl===i+1?' hl':'')+'" data-v="'+(i+1)+'"><div><span class="tag">'+esc(vi.short)+'</span>'+titleHTML(a)+'<span class="vn" title="Highlight or copy">'+(i+1)+'</span><span'+langAttr(vi)+'>'+a.body+'</span></div><div class="alt"><span class="tag">'+esc(pvi.short)+'</span><span'+langAttr(pvi)+'>'+bb+'</span></div></div>';
+    });
   }else{
     page.className="page "+S.layout;
     let open=false,p="";
     verses.forEach((t,i)=>{
-      const r=renderTokens(t,vi,{v:i+1,col:"a",notes:notesA,ver:S.ver,book:S.book,ch:S.ch,ech:echA,ap:apA,red:redA});
-      if(r.h){if(open)p+='</p>';p+='<h3 class="sect">'+esc(r.h)+'</h3>';open=false}
+      const [kc,kv]=kjvRef(S.ver,S.book,S.ch,i+1);
+      const r=renderTokens(t,vi,{v:i+1,col:"a",notes:notesA,ver:S.ver,book:S.book,ch:S.ch,kc,kv,ap:apA});
+      if(r.h){if(open)p+='</p>';p+=r.h;open=false}
+      else if(r.p&&open&&S.layout==="flow"){p+='</p>';open=false}
       if(!open){p+='<p'+langAttr(vi)+'>';open=true}
-      p+='<span class="v'+(S.hl===i+1?' hl':'')+'" data-v="'+(i+1)+'"><span class="vn" title="Highlight or copy">'+(i+1)+'</span>'+r.body+' </span>';
+      p+='<span class="v'+(r.p&&S.layout!=="flow"?' pstart':'')+(S.hl===i+1?' hl':'')+'" data-v="'+(i+1)+'">'+titleHTML(r)+'<span class="vn" title="Highlight or copy">'+(i+1)+'</span>'+r.body+' </span>';
     });
     if(open)p+='</p>';h+=p;
   }
@@ -654,7 +712,7 @@ async function render(){
 function bibleComLinks(){
   const i=PROT.indexOf(S.book);if(i<0)return "";
   const nt=i>=NT_START;
-  const ech=mapCh(S.book,S.ch,S.ver,"KJV");
+  const ech=kjvRef(S.ver,S.book,S.ch,2)[0];
   const chip=([id,ab,label,ntOnly])=>(ntOnly&&!nt)?"":'<a href="https://www.bible.com/bible/'+id+'/'+USFM[i]+'.'+ech+'.'+encodeURIComponent(ab)+'" target="_blank" rel="noopener">'+esc(label)+'</a>';
   const row=(lbl,list)=>'<div class="ext-row"><span class="ext-lbl">'+lbl+'</span>'+list.map(chip).join("")+'</div>';
   return '<div class="ext">'+row("Bible.com ↗",BC[0][1])+'<details><summary>Russian and Xitsonga on Bible.com</summary>'+row("Русский",BC[1][1])+row("Xitsonga",BC[2][1])+'</details></div>';
@@ -678,6 +736,7 @@ $("#page").addEventListener("mouseover",e=>{
 $("#page").addEventListener("mouseleave",()=>{hoverEl=null;if(!pinned)clearLinks()});
 $("#page").addEventListener("click",e=>{
   const fn=e.target.closest(".fn");if(fn){showNote(fn);return}
+  const xr=e.target.closest(".xref");if(xr){const [n,c,v]=xr.dataset.go.split("|");const d=VC[S.ver];if(d&&d.map[n]!=null)go(n,+c,v?+v:null);else toast(bookLabel(n)+" is not in "+vinfo(S.ver).short);return}
   const w=e.target.closest(".w");
   if(w){
     if(pinned===w){unpin();return}
@@ -726,7 +785,7 @@ async function showDetails(r){
   if(!r||!S.dockOn)return;
   const seq=++detSeq,t=r.tok;
   await loadMorph();
-  const ref=bookLabel(r.ctx.book,"KJV")+" "+(r.ctx.ech||r.ctx.ch)+":"+r.ctx.v;
+  const ref=bookLabel(r.ctx.book,r.ctx.ver)+" "+r.ctx.ch+":"+r.ctx.v;
   let entries=[],word,wordLang=null,src=r.vi.short;
   if(isOrigTok(t)){
     const L=t[5][0]==="G"?"G":"H";const lex=await loadLex(L);if(seq!==detSeq)return;
@@ -736,7 +795,7 @@ async function showDetails(r){
     const strongs=linkSet(t[1]);
     const L=(strongs[0]||"H")[0];const lex=await loadLex(L);
     let vv=null;
-    try{const isNT=PROT.indexOf(r.ctx.book)>=NT_START;const chv=await getChapter(isNT?"TR":"HEB",r.ctx.book,r.ctx.ech||r.ctx.ch);vv=chv&&chv[r.ctx.v-1]}catch(e){}
+    try{const isNT=PROT.indexOf(r.ctx.book)>=NT_START;const chv=await getChapter(isNT?"TR":"HEB",r.ctx.book,r.ctx.kc||r.ctx.ch);vv=chv&&chv[(r.ctx.kv||r.ctx.v)-1]}catch(e){}
     if(seq!==detSeq)return;
     const allS=(t[1]||"").split(" "),morphs=(t[2]||"").split(" ");
     entries=strongs.map(s=>{const hit=Array.isArray(vv)?vv.find(x=>isOrigTok(x)&&x[1].split(" ").includes(s)):null;
@@ -786,10 +845,10 @@ const HCOL=["yellow","green","blue","pink","purple"];
 const HNAME={yellow:"Yellow",green:"Green",blue:"Blue",pink:"Pink",purple:"Purple"};
 let HL=store.get("hl",{}),hlDb=null,hlCol=null;   // key "bookIdx.ch.v" (English numbering) -> {c,t}
 function hlKey(book,ech,v){return ALLBOOKS.indexOf(book)+"."+ech+"."+v}
+function verseKey(v){const [c,vv]=kjvRef(S.ver,S.book,S.ch,v);return hlKey(S.book,c,vv)}
 function applyHighlights(){
-  const ech=mapCh(S.book,S.ch,S.ver,"KJV");
   document.querySelectorAll("#page [data-v]").forEach(el=>{
-    const h=HL[hlKey(S.book,ech,+el.dataset.v)];
+    const h=HL[verseKey(+el.dataset.v)];
     if(h)el.dataset.h=h.c;else el.removeAttribute("data-h");
   });
 }
@@ -816,7 +875,7 @@ async function setHighlight(key,color){
 let vmFor=null;
 function openVerseMenu(vn){
   const holder=vn.closest("[data-v]"),v=+holder.dataset.v,m=$("#vmenu");
-  const key=hlKey(S.book,mapCh(S.book,S.ch,S.ver,"KJV"),v),cur=HL[key]&&HL[key].c;
+  const key=verseKey(v),cur=HL[key]&&HL[key].c;
   if(!m.hidden&&vmFor===key){m.hidden=true;return}
   vmFor=key;
   m.innerHTML=HCOL.map(c=>'<button class="sw'+(c===cur?' on':'')+'" data-c="'+c+'" style="background:var(--h-'+c+')" aria-label="Highlight '+HNAME[c]+'" title="'+HNAME[c]+'"></button>').join("")+
@@ -841,8 +900,9 @@ async function showHighlights(){
   const d=await loadVer(S.ver).catch(()=>null);
   const rows=await Promise.all(items.map(async x=>{
     let txt="";
-    try{if(d&&d.map[x.book]!=null){const ch=mapCh(x.book,x.c,"KJV",S.ver);const vv=await getChapter(S.ver,x.book,ch);txt=vv&&vv[x.v-1]?verseText(vv[x.v-1]):""}}catch(e){}
-    return '<button class="hl-item" data-go="'+esc(x.book)+'|'+x.c+'|'+x.v+'"><span class="dot" style="background:var(--h-'+x.col+')"></span><span><b>'+esc(bookLabel(x.book))+' '+mapCh(x.book,x.c,"KJV",S.ver)+':'+x.v+'</b><span'+langAttr(vinfo(S.ver))+'>'+esc(txt.length>220?txt.slice(0,220)+"…":txt)+'</span></span></button>';
+    const [nc,nv]=fromK(S.ver,x.book,x.c,x.v)[0]||[x.c,x.v];
+    try{if(d&&d.map[x.book]!=null){const vv=await getChapter(S.ver,x.book,nc);txt=vv&&vv[nv-1]?verseText(vv[nv-1]):""}}catch(e){}
+    return '<button class="hl-item" data-go="'+esc(x.book)+'|'+nc+'|'+nv+'"><span class="dot" style="background:var(--h-'+x.col+')"></span><span><b>'+esc(bookLabel(x.book))+' '+nc+':'+nv+'</b><span'+langAttr(vinfo(S.ver))+'>'+esc(txt.length>220?txt.slice(0,220)+"…":txt)+'</span></span></button>';
   }));
   body.innerHTML=h+'<div class="hl-list">'+rows.join("")+'</div>'+(hlCol?'':'<p class="muted" style="font-size:12px;margin-top:12px">Highlights are saved on this device.</p>');
   bindHl();
@@ -850,7 +910,7 @@ async function showHighlights(){
 function bindHl(){
   const body=$("#hlBody");
   body.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{hlFilter=b.dataset.f;showHighlights()});
-  body.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{const [n,c,v]=b.dataset.go.split("|");closeSheets();go(n,mapCh(n,+c,"KJV",S.ver),+v)});
+  body.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{const [n,c,v]=b.dataset.go.split("|");closeSheets();go(n,+c,+v)});
 }
 $("#hlOpen").onclick=()=>{closeSheets();openSheet("#hlSheet");showHighlights()};
 
@@ -968,12 +1028,14 @@ function syncSettings(){
   $("#italSeg").querySelectorAll("button").forEach(b=>b.classList.toggle("on",+b.dataset.i===S.ital));
   $("#dockSeg").querySelectorAll("button").forEach(b=>b.classList.toggle("on",+b.dataset.d===S.dockOn));
   $("#redSeg").querySelectorAll("button").forEach(b=>b.classList.toggle("on",+b.dataset.r===S.red));
+  $("#quoteSeg").querySelectorAll("button").forEach(b=>b.classList.toggle("on",+b.dataset.q===S.quotes));
 }
 $("#sizeSeg").onclick=e=>{const b=e.target.closest("button");if(!b)return;S.size=+b.dataset.s;store.set("size",S.size);syncSettings()};
 $("#layoutSeg").onclick=e=>{const b=e.target.closest("button");if(!b)return;S.layout=b.dataset.l;store.set("layout",S.layout);syncSettings();render()};
 $("#italSeg").onclick=e=>{const b=e.target.closest("button");if(!b)return;S.ital=+b.dataset.i;store.set("ital",S.ital);syncSettings();render()};
 $("#dockSeg").onclick=e=>{const b=e.target.closest("button");if(!b)return;S.dockOn=+b.dataset.d;store.set("dock",S.dockOn);syncSettings();render()};
 $("#redSeg").onclick=e=>{const b=e.target.closest("button");if(!b)return;S.red=+b.dataset.r;store.set("red",S.red);syncSettings();render()};
+$("#quoteSeg").onclick=e=>{const b=e.target.closest("button");if(!b)return;S.quotes=+b.dataset.q;store.set("quotes",S.quotes);syncSettings();render()};
 $("#setBtn").onclick=()=>openSheet("#setSheet");
 
 document.addEventListener("keydown",e=>{
@@ -1000,7 +1062,7 @@ if("serviceWorker" in navigator&&(location.protocol==="https:"||location.hostnam
   $("#offBtn").onclick=async()=>{
     const btn=$("#offBtn");btn.disabled=true;
     try{
-      let urls=["data/morph.json","data/lex-heb.json","data/lex-grk.json"];
+      let urls=["data/morph.json","data/lex-heb.json","data/lex-grk.json","data/vrs.json"];
       for(const id of [S.ver,"HEB","GRK","TR"])urls=urls.concat(await offUrls(id));
       const par=resolvePar();if(par&&!["HEB","GRK","TR"].includes(par))urls=urls.concat(await offUrls(par));
       urls=[...new Set(urls)];let done=0;

@@ -1,6 +1,6 @@
-// Lectio service worker — build 202610180202
-const SHELL="lectio-shell-202610180202",DATA="lectio-data",FONTS="lectio-fonts";
-const SHELL_FILES=["./","index.html","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","icons/apple-touch-icon.png","icons/favicon-32.png","data/morph.json"];
+// Lectio service worker — build 202610181007
+const SHELL="lectio-shell-202610181007",DATA="lectio-data",FONTS="lectio-fonts";
+const SHELL_FILES=["./","index.html","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","icons/apple-touch-icon.png","icons/favicon-32.png","data/morph.json","data/vrs.json"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(SHELL).then(c=>c.addAll(SHELL_FILES)).then(()=>self.skipWaiting()))});
 // On update: drop old app shells, and refresh only the saved Bible files whose contents changed
 async function refreshData(){

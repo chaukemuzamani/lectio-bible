@@ -25,7 +25,7 @@ if("serviceWorker" in navigator&&(location.protocol==="https:"||location.hostnam
   $("#offBtn").onclick=async()=>{
     const btn=$("#offBtn");btn.disabled=true;
     try{
-      let urls=["data/morph.json","data/lex-heb.json","data/lex-grk.json"];
+      let urls=["data/morph.json","data/lex-heb.json","data/lex-grk.json","data/vrs.json"];
       for(const id of [S.ver,"HEB","GRK","TR"])urls=urls.concat(await offUrls(id));
       const par=resolvePar();if(par&&!["HEB","GRK","TR"].includes(par))urls=urls.concat(await offUrls(par));
       urls=[...new Set(urls)];let done=0;
@@ -79,7 +79,7 @@ json.dump({"name":"Lectio Bible","short_name":"Lectio","description":"Many Bible
 # service worker
 open(f"{OUT}/sw.js","w").write(f'''// Lectio service worker — build {build}
 const SHELL="lectio-shell-{build}",DATA="lectio-data",FONTS="lectio-fonts";
-const SHELL_FILES=["./","index.html","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","icons/apple-touch-icon.png","icons/favicon-32.png","data/morph.json"];
+const SHELL_FILES=["./","index.html","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","icons/apple-touch-icon.png","icons/favicon-32.png","data/morph.json","data/vrs.json"];
 self.addEventListener("install",e=>{{e.waitUntil(caches.open(SHELL).then(c=>c.addAll(SHELL_FILES)).then(()=>self.skipWaiting()))}});
 // On update: drop old app shells, and refresh only the saved Bible files whose contents changed
 async function refreshData(){{
@@ -107,8 +107,9 @@ self.addEventListener("fetch",e=>{{
 }});
 ''')
 # data
-if os.path.exists(f"{OUT}/data"): shutil.rmtree(f"{OUT}/data")
-shutil.copytree(f"{SRC}/data",f"{OUT}/data",ignore=shutil.ignore_patterns("_*","hashes.json"))
+if os.path.realpath(f"{SRC}/data")!=os.path.realpath(f"{OUT}/data"):     # the page's data folder may be this one
+    if os.path.exists(f"{OUT}/data"): shutil.rmtree(f"{OUT}/data")
+    shutil.copytree(f"{SRC}/data",f"{OUT}/data",ignore=shutil.ignore_patterns("_*","hashes.json"))
 open(f"{OUT}/.nojekyll","w").write("")
 hashes={}
 for root,_,fs in os.walk(f"{OUT}/data"):
