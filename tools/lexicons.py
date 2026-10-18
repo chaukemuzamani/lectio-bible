@@ -19,7 +19,9 @@ CHUNK=100
 
 def dump(obj,path):
     os.makedirs(os.path.dirname(path),exist_ok=True)
-    json.dump(obj,open(path,"w"),ensure_ascii=False,separators=(",",":"))
+    t=json.dumps(obj,ensure_ascii=False,separators=(",",":"))
+    t=re.sub(r" ?\ufffd","",t)      # one broken character in the Strong's Hebrew source (H7578)
+    open(path,"w",encoding="utf-8").write(t)
 
 def chunked(d,sub):
     groups=collections.defaultdict(dict)
