@@ -171,6 +171,8 @@ def snapshot(commit,v,title):
     old=old.replace('href="manifest.webmanifest"','href="../../manifest.webmanifest"').replace('href="icons/','href="../../icons/')
     old=old.replace('register("sw.js")','register("../../sw.js",{scope:"../../"})')
     old=re.sub(r'(["\'])data/',r'\1../../data/',old)
+    old=re.sub(r'<script>/\* an earlier version chosen.*?</script>\n?','',old,flags=re.S)   # the snapshot must not redirect itself
+    old=re.sub(r'(["\'])versions/',r'\1../../versions/',old)
     bar=(f'<div id="pinBar" style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:8px 16px;'
          f'background:#a3301f;color:#fff;font:500 13px/1.4 system-ui,sans-serif;text-align:center">'
          f'<span>You are using Lectio {v} ({title}), an earlier version.</span>'

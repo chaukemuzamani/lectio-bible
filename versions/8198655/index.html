@@ -9,8 +9,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Lectio">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<script>/* an earlier version chosen under What's new opens instead of this one until "Return to latest" */
-try{var pin=JSON.parse(localStorage.getItem("lectio.pin")||"null");if(pin&&/^[0-9a-f]{7,40}$/.test(pin))location.replace("versions/"+pin+"/"+location.hash)}catch(e){}</script>
 <link rel="manifest" href="../../manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="../../icons/favicon-32.png">
 <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
@@ -1352,7 +1350,7 @@ const CUR_REL=RELEASES[0];
 if(CUR_REL)$("#verNote").textContent="Lectio "+CUR_REL.v+" · "+fmtDate(CUR_REL.date);
 async function showLog(){
   let avail={};
-  if(IS_SITE)try{avail=await fetchJSON("versions/index.json")}catch(e){}
+  if(IS_SITE)try{avail=await fetchJSON("../../versions/index.json")}catch(e){}
   const anyOld=RELEASES.some((r,i)=>i>0&&avail[r.id]);
   let h='<p class="log-intro">'+(IS_SITE?(anyOld?'If an update causes problems, you can switch back to an earlier version below. Your highlights, saved verses and settings stay as they are, and you can return to the latest version at any time.':'Every update is listed here.'):'Every update is listed here. In the installed app you can also switch back to an earlier version; here, ask Claude to restore one.')+'</p>';
   RELEASES.forEach((r,i)=>{
@@ -1363,7 +1361,7 @@ async function showLog(){
   });
   $("#logBody").innerHTML=h;
   $("#logBody").querySelectorAll(".rel-use").forEach(b=>b.onclick=()=>{
-    store.set("pin",b.dataset.id);location.href="versions/"+b.dataset.id+"/"+(location.hash||"");
+    store.set("pin",b.dataset.id);location.href="../../versions/"+b.dataset.id+"/"+(location.hash||"");
   });
 }
 $("#logOpen").onclick=()=>{closeSheets();openSheet("#logSheet");showLog()};
