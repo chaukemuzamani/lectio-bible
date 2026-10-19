@@ -49,35 +49,99 @@ def greek_refs(text):
             pos+=n.end()
     return out
 
+NOTE_RE=re.compile(r"(?i)^(trans|intrans|in-trans|in\b|as\b|by\b|c\.|later|generally|properly|prop\b|metaph|meton|adverb|adv\b|prep|defin|with\b|absol|pass\b|mid\b|act\b|cl\b|causal|esp|after\b|neut|perfective|pl\b|sing|gen\b|dat\b|acc)")
+QUAL_RE=re.compile(r"(?i)^(of|with|in|as|after|before|absol|pass|mid|trans|intrans|c\.|by|at|for|on|from|to the|in a|in the)\b")
+GREEKCH=re.compile(r"[Ͱ-Ͽἀ-῿]")
+def sense_label(part):
+    """Name of a (sub-)sense from its own text: its first bold words, else its definition text, skipping grammar notes."""
+    bb=re.search(r"<b>([^<]+)</b>",part)
+    if bb:
+        lab=clean_label(plain(bb.group(1)))
+        if lab: lab=tidy(lab)
+        pre=plain(part[:bb.start()]).strip(" ,;:")             # “of persons, <b>faithful, trusty</b>” → keep the qualifier
+        if re.search(r"(?i)\b(the|a|an|of)$",pre): pre=""        # “Of the <b>Holy Spirit</b>” is not a qualifier
+        if lab and pre and len(pre)<=24 and QUAL_RE.match(pre) and not GREEKCH.search(pre) and not NOTE_RE.match(pre):
+            lab=f"{lab} ({pre})"
+        return lab
+    head=re.split(r"[:;]|,\s*(?:with|c\.)\s",plain(part))[0].strip()
+    head=re.sub(r"\s+[A-Z][a-z]{1,3}\.\d.*$","",head)             # trailing verse reference
+    if not head or GREEKCH.search(head[:3]): return None
+    to=re.search(r"(?:^|,\s*)(to\s.+)$",head)
+    if NOTE_RE.match(head) or len(head)<4:
+        return tidy(clean_label(to.group(1)) or "") or None if to else None
+    h=clean_label(head);return tidy(h) if h else None
+
+def is_qualifier(lab): return bool(lab) and (len(lab)<=32 or bool(re.match(r"(?i)of\s",lab))) and bool(QUAL_RE.match(lab))
+def has_bold(part): return bool(re.search(r"<b>[^<]+</b>",part))
+
+USAGE_RE=re.compile(r"(?i)^(anarthrous|epanaleptic|special idioms?|in general|generally|more freq|with(out)? (the )?art|absol|esp\b|chiefly|freq)")
+def usage_like(lab): return bool(lab) and (is_qualifier(lab) or bool(NOTE_RE.match(lab)) or bool(USAGE_RE.match(lab)))
+def tidy(lab):
+    lab=re.sub(r"\s*\([^()]*(?:\d|cl\.|Hom|Plat|LXX|Arist|Polyb|Xen|Luc|al\.|MM|Bl\.|see)[^()]*\)","",lab)   # citations
+    lab=re.sub(r",?\s*[1-3]?[A-Z][a-z]{1,2}\.\d[\d:,\s-]*","",lab)                                          # verse references
+    return re.sub(r"\s+"," ",lab).strip(" ,;:.")
+def lowerfirst(q): return q[:1].lower()+q[1:] if q[:2]!=q[:2].upper() else q
+def compose(core,quals):
+    quals=[tidy(q) for q in quals if q and tidy(q)]
+    core=tidy(core) if core else None
+    if not core: return None
+    m=re.match(r"^(.*?)\s*\(([^()]*)\)$",core)                 # “God (of the one true)” + “anarthrous” → one bracket
+    if m and quals: core,quals=m.group(1),[m.group(2)]+quals
+    quals=[q for i,q in enumerate(quals) if q.lower() not in [x.lower() for x in quals[:i]] and q.lower() not in core.lower()]
+    return core+(" ("+"; ".join(lowerfirst(q) for q in quals)+")" if quals else "")
+
 def greek():
+    """Items are the numbered senses, or their lettered sub-senses (“2a”) where Abbott-Smith divides them —
+    the verse references sit under the sub-senses, so the marker can point at exactly the right one.
+    A name is the definition, with usage notes (“of persons”, “in general”) in brackets after it."""
     lex=json.load(open(f"{DATA}/lex-grk.json"));res={}
     for g,key in lex["b"].items():
         e=lex["e"].get(key)
         if not e or not e[4]: continue
         t=e[4].replace("<br>","\n")
         parts=re.split(r"__\s*(\d+)\.",t)
-        if len(parts)<5: continue            # need at least two numbered senses
-        labels=[];vmap={};num=[]
-        for i in range(1,len(parts),2):
-            n=int(parts[i]);seg=parts[i+1]
-            own=re.split(r"__\s*\(",seg)[0]                     # the sense itself, before its (a) (b) sub-senses
-            bb=re.search(r"<b>([^<]+)</b>",own)                  # “intrans., <b>to have faith</b>”, “<b>to complete</b>”
-            if bb: lab=clean_label(plain(bb.group(1)))
-            else:                                                 # “__1. to fill, make full, fill to the full, with accusative;”
-                head=re.split(r"[:;]|,\s*(?:with|c\.)\s",plain(own))[0].strip()
-                note=re.match(r"(?i)(trans|intrans|in-trans|in\b|of\b|as\b|by\b|c\.|later|generally|properly|prop\b|metaph|meton|adverb|adv\b|prep|defin|with\b|absol|pass\b|mid\b|act\b|cl\b|causal|esp|after\b|neut|perfective|pl\b|sing|gen\b|dat\b|acc)",head) or len(head)<8 or re.search(r"[\u0370-\u03FF\u1F00-\u1FFF]",head)
-                to=re.search(r"(?:^|,\s*)(to\s.+)$",head)
-                anyb=re.search(r"<b>([^<]+)</b>",seg)
-                if not note and head: lab=clean_label(head)
-                elif to: lab=clean_label(to.group(1))           # “in general sense (cl.), to reveal, uncover” → “to reveal, uncover”
-                elif anyb: lab=clean_label(plain(anyb.group(1)))
-                else: lab=clean_label(head)
-            num.append(n);labels.append(lab or f"sense {n}")
-            for bi,c,v in greek_refs(plain(seg)):
-                vmap.setdefault(f"{bi}.{c}.{v}",len(labels)-1)
-        if num!=list(range(1,len(num)+1)): continue   # numbering restarts (I. 1. 2. II. 1. …): ambiguous
-        if sum(1 for l in labels if l.startswith("sense "))>0: continue
-        res[g]=[labels,vmap]
+        if len(parts)<5: continue
+        nums=[int(parts[i]) for i in range(1,len(parts),2)]
+        if nums!=list(range(1,len(nums)+1)): continue
+        gloss=clean_label(re.sub(r"[/:].*","",e[3] or ""))
+        verb=":V" in (e[2] or "")
+        def usage(l): return usage_like(l) or (bool(l) and not verb and l.lower().startswith("to "))
+        def build(with_subs):
+            items=[];vmap={}
+            for i in range(1,len(parts),2):
+                n=int(parts[i]);seg=parts[i+1]
+                sp=re.split(r"__\s*\(([a-z])\)",seg) if with_subs else [seg]
+                own=sp[0];plab=sense_label(own)
+                pdef=None if usage(plab) else plab;pq=plab if usage(plab) else None
+                subs=[(sp[j],sp[j+1]) for j in range(1,len(sp),2)]
+                if len(subs)<2:
+                    lab=compose(pdef or (sense_label(subs[0][1]) if subs and not usage(sense_label(subs[0][1])) else None) or gloss,[pq])
+                    if not lab: return None
+                    items.append((str(n),lab))
+                    for bi,c,v in greek_refs(plain(seg)): vmap.setdefault(f"{bi}.{c}.{v}",len(items)-1)
+                    continue
+                group=[]
+                for letter,txt in subs:
+                    sl=sense_label(txt);bold=has_bold(txt)
+                    if sl and (usage(sl) or (not bold and pdef)): sdef,sq=None,(sl if usage(sl) else None)
+                    else: sdef,sq=sl,None
+                    lab=compose(sdef or pdef or gloss,[pq,sq])
+                    if not lab: continue
+                    refs=greek_refs(plain(txt))
+                    if group and group[-1][1]==lab: group[-1][2].extend(refs)
+                    else: group.append([f"{n}{letter}",lab,refs])
+                if not group: return None
+                if len(group)==1: group[0][0]=str(n)
+                for k2,lab,refs in group:
+                    items.append((k2,lab))
+                    for bi,c,v in refs: vmap.setdefault(f"{bi}.{c}.{v}",len(items)-1)
+            keys=[k for k,_ in items];labs=[l for _,l in items]
+            if len(set(keys))!=len(keys) or len(items)<2 or len(set(labs))<2: return None
+            return items,vmap
+        r=build(True) or build(False)
+        if not r: continue
+        items,vmap=r
+        res[g]=[[l for _,l in items],vmap,[k for k,_ in items]]
     return res
 
 # ------------------------------------------------------------------ Hebrew

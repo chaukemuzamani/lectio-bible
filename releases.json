@@ -90,10 +90,20 @@
  },
  {
   "date": "2026-10-19",
-  "commit": null,
+  "commit": "f540d7d",
   "title": "Clearer meaning names",
   "notes": [
    "Word details: Greek meanings are named by their definition instead of a sub-heading (πληρόω: “1. to fill, make full” rather than “1. of things”); about 150 words corrected."
+  ]
+ },
+ {
+  "date": "2026-10-19",
+  "commit": null,
+  "title": "Meanings checked word by word",
+  "notes": [
+   "Every Greek word's meanings were checked: where Abbott-Smith divides a meaning into (a), (b)…, these now appear as 1a, 1b, and ▸ marks the exact one for your verse (πληρόω in Acts 2:2: ▸1a. to fill … (of things)).",
+   "Meanings are named by their definition, with notes like “of persons” or “in general” in brackets, instead of sub-headings or grammar notes.",
+   "Words whose dictionary entry can't be divided cleanly show the dictionary text as before, rather than a guessed list."
   ]
  }
 ]
