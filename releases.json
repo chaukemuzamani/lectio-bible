@@ -81,11 +81,19 @@
  },
  {
   "date": "2026-10-19",
-  "commit": null,
+  "commit": "8198655",
   "title": "Meanings in word details, and this changelog",
   "notes": [
    "Word details list a word's meanings, numbered, and ▸ marks the meaning the dictionary gives for the verse you're reading.",
    "Settings › What's new shows every update. In the installed app you can switch back to an earlier version if an update causes problems."
+  ]
+ },
+ {
+  "date": "2026-10-19",
+  "commit": null,
+  "title": "Clearer meaning names",
+  "notes": [
+   "Word details: Greek meanings are named by their definition instead of a sub-heading (πληρόω: “1. to fill, make full” rather than “1. of things”); about 150 words corrected."
   ]
  }
 ]

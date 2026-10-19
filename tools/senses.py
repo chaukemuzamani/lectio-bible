@@ -24,7 +24,8 @@ def plain(s):
     return re.sub(r"\s+"," ",html.unescape(s)).strip()
 
 def clean_label(s,maxlen=60):
-    s=re.sub(r"\s+"," ",s).strip().strip(",;:. ")
+    s=re.sub(r"\s+"," ",s).replace("\xad","").strip().strip(",;:. ")
+    if s.count("(")>s.count(")"): s=s[:s.rindex("(")].strip(" ,;:.")
     return s if 0<len(s)<=maxlen and re.match(r"\w",s) else None
 
 # ------------------------------------------------------------------ Greek
@@ -59,8 +60,18 @@ def greek():
         labels=[];vmap={};num=[]
         for i in range(1,len(parts),2):
             n=int(parts[i]);seg=parts[i+1]
-            b=re.search(r"<b>([^<]+)</b>",seg)
-            lab=clean_label(plain(b.group(1)) if b else plain(seg).split(":")[0].split(";")[0])
+            own=re.split(r"__\s*\(",seg)[0]                     # the sense itself, before its (a) (b) sub-senses
+            bb=re.search(r"<b>([^<]+)</b>",own)                  # “intrans., <b>to have faith</b>”, “<b>to complete</b>”
+            if bb: lab=clean_label(plain(bb.group(1)))
+            else:                                                 # “__1. to fill, make full, fill to the full, with accusative;”
+                head=re.split(r"[:;]|,\s*(?:with|c\.)\s",plain(own))[0].strip()
+                note=re.match(r"(?i)(trans|intrans|in-trans|in\b|of\b|as\b|by\b|c\.|later|generally|properly|prop\b|metaph|meton|adverb|adv\b|prep|defin|with\b|absol|pass\b|mid\b|act\b|cl\b|causal|esp|after\b|neut|perfective|pl\b|sing|gen\b|dat\b|acc)",head) or len(head)<8 or re.search(r"[\u0370-\u03FF\u1F00-\u1FFF]",head)
+                to=re.search(r"(?:^|,\s*)(to\s.+)$",head)
+                anyb=re.search(r"<b>([^<]+)</b>",seg)
+                if not note and head: lab=clean_label(head)
+                elif to: lab=clean_label(to.group(1))           # “in general sense (cl.), to reveal, uncover” → “to reveal, uncover”
+                elif anyb: lab=clean_label(plain(anyb.group(1)))
+                else: lab=clean_label(head)
             num.append(n);labels.append(lab or f"sense {n}")
             for bi,c,v in greek_refs(plain(seg)):
                 vmap.setdefault(f"{bi}.{c}.{v}",len(labels)-1)
