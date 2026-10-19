@@ -1,5 +1,5 @@
-// Lectio service worker — build 202610191820
-const SHELL="lectio-shell-202610191820",DATA="lectio-data",FONTS="lectio-fonts";
+// Lectio service worker — build 202610191846
+const SHELL="lectio-shell-202610191846",DATA="lectio-data",FONTS="lectio-fonts";
 const SHELL_FILES=["./","index.html","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","icons/apple-touch-icon.png","icons/favicon-32.png","data/morph.json","data/vrs.json"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(SHELL).then(c=>c.addAll(SHELL_FILES)).then(()=>self.skipWaiting()))});
 // On update: drop old app shells, and refresh only the saved Bible files whose contents changed
@@ -19,6 +19,9 @@ self.addEventListener("fetch",e=>{
   if(u.origin==="https://fonts.googleapis.com"||u.origin==="https://fonts.gstatic.com"){
     e.respondWith(caches.open(FONTS).then(async c=>{const hit=await c.match(r);const net=fetch(r).then(res=>{if(res.ok)c.put(r,res.clone());return res}).catch(()=>hit);return hit||net}));return}
   if(u.origin!==location.origin)return;
+  if(u.pathname.includes("/versions/")&&!u.pathname.includes("/data/")){
+    // earlier versions: from the network, kept for offline use, never mixed with the current app
+    e.respondWith(caches.open("lectio-versions").then(async c=>{try{const res=await fetch(r);if(res.ok)c.put(r,res.clone());return res}catch(err){return (await c.match(r,{ignoreSearch:true}))||Response.error()}}));return}
   if(r.mode==="navigate"||u.pathname.endsWith("/index.html")){
     e.respondWith(fetch(r).then(res=>{caches.open(SHELL).then(c=>c.put("index.html",res.clone()));return res}).catch(()=>caches.match("index.html")));return}
   if(u.pathname.includes("/data/")){

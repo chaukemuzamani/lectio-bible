@@ -1,6 +1,8 @@
 """Builds the installable Lectio site from the artifact page (../bible/index.html)."""
-import os,re,shutil,json,hashlib,time
+import os,re,shutil,json,hashlib,time,subprocess,sys
 SRC="/home/claude/bible";OUT=os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0,os.path.join(OUT,"tools"));import releases
+releases.write()                                   # number the releases and put them into the page
 s=open(f"{SRC}/index.html",encoding="utf-8").read()
 def rep(a,b):
     global s
@@ -88,6 +90,7 @@ rep('''.home-grid{display:grid;''','''.home-inst{margin-top:12px}
 .inst-key svg{width:14px;height:14px}
 .inst-copy{margin-top:12px;background:var(--rubric);color:var(--leaf);border:none;border-radius:6px;padding:9px 14px;cursor:pointer;font-weight:500}
 .home-grid{display:grid;''')
+rep("const IS_SITE=false;","const IS_SITE=true;")
 # split into head / body
 i=s.index("<header")
 head_part,body_part=s[:i],s[i:]
@@ -103,6 +106,8 @@ doc=f'''<!doctype html>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Lectio">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<script>/* an earlier version chosen under What's new opens instead of this one until "Return to latest" */
+try{{var pin=JSON.parse(localStorage.getItem("lectio.pin")||"null");if(pin&&/^[0-9a-f]{{7,40}}$/.test(pin))location.replace("versions/"+pin+"/"+location.hash)}}catch(e){{}}</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -143,6 +148,9 @@ self.addEventListener("fetch",e=>{{
   if(u.origin==="https://fonts.googleapis.com"||u.origin==="https://fonts.gstatic.com"){{
     e.respondWith(caches.open(FONTS).then(async c=>{{const hit=await c.match(r);const net=fetch(r).then(res=>{{if(res.ok)c.put(r,res.clone());return res}}).catch(()=>hit);return hit||net}}));return}}
   if(u.origin!==location.origin)return;
+  if(u.pathname.includes("/versions/")&&!u.pathname.includes("/data/")){{
+    // earlier versions: from the network, kept for offline use, never mixed with the current app
+    e.respondWith(caches.open("lectio-versions").then(async c=>{{try{{const res=await fetch(r);if(res.ok)c.put(r,res.clone());return res}}catch(err){{return (await c.match(r,{{ignoreSearch:true}}))||Response.error()}}}}));return}}
   if(r.mode==="navigate"||u.pathname.endsWith("/index.html")){{
     e.respondWith(fetch(r).then(res=>{{caches.open(SHELL).then(c=>c.put("index.html",res.clone()));return res}}).catch(()=>caches.match("index.html")));return}}
   if(u.pathname.includes("/data/")){{
@@ -156,6 +164,26 @@ if os.path.realpath(f"{SRC}/data")!=os.path.realpath(f"{OUT}/data"):     # the p
     if os.path.exists(f"{OUT}/data"): shutil.rmtree(f"{OUT}/data")
     shutil.copytree(f"{SRC}/data",f"{OUT}/data",ignore=shutil.ignore_patterns("_*","hashes.json"))
 open(f"{OUT}/.nojekyll","w").write("")
+# earlier versions: each release's page, as it was published, under versions/<commit>/ (sharing today's data)
+def snapshot(commit,v,title):
+    try: old=subprocess.run(["git","-C",OUT,"show",f"{commit}:index.html"],capture_output=True,check=True).stdout.decode("utf-8")
+    except subprocess.CalledProcessError: return False
+    old=old.replace('href="manifest.webmanifest"','href="../../manifest.webmanifest"').replace('href="icons/','href="../../icons/')
+    old=old.replace('register("sw.js")','register("../../sw.js",{scope:"../../"})')
+    old=re.sub(r'(["\'])data/',r'\1../../data/',old)
+    bar=(f'<div id="pinBar" style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:8px 16px;'
+         f'background:#a3301f;color:#fff;font:500 13px/1.4 system-ui,sans-serif;text-align:center">'
+         f'<span>You are using Lectio {v} ({title}), an earlier version.</span>'
+         f'<button id="pinBack" style="background:#fff;color:#a3301f;border:0;border-radius:6px;padding:5px 12px;font:600 13px system-ui,sans-serif;cursor:pointer">Return to latest</button></div>'
+         f'<script>try{{localStorage.setItem("lectio.pin",JSON.stringify("{commit}"))}}catch(e){{}}'
+         f'document.getElementById("pinBack").onclick=function(){{try{{localStorage.removeItem("lectio.pin")}}catch(e){{}}location.href="../../"+location.hash}};</script>')
+    old=old.replace("<body>","<body>\n"+bar,1)
+    os.makedirs(f"{OUT}/versions/{commit}",exist_ok=True)
+    open(f"{OUT}/versions/{commit}/index.html","w",encoding="utf-8").write(old)
+    return True
+R=releases.load()
+made=[r["commit"] for r in R[:-1] if r.get("commit") and snapshot(r["commit"],r["v"],r["title"])]
+print("earlier versions:",len(made))
 hashes={}
 for root,_,fs in os.walk(f"{OUT}/data"):
     for f in fs:

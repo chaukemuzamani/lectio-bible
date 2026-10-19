@@ -1,0 +1,29 @@
+[
+ {"date":"2026-10-18","commit":"ab06c08","title":"Words of Jesus in red","notes":[
+   "The words of Jesus are shown in red in every version.",
+   "The installed app now downloads only the Bible files that changed in an update."]},
+ {"date":"2026-10-18","commit":"cb5fdf7","title":"Quotation marks, headings and psalm titles","notes":[
+   "Quotation marks added where a version prints none (KJV, ASV, Darby, Webster, UKJV, Geneva, Douay-Rheims, Tyndale, BBE, Brenton, Synodal, Church Slavonic, Makarius); Russian uses «…» and „…“.",
+   "Words of Jesus: the red runs exactly from his opening to his closing quotation mark, so the narrator stays black.",
+   "Section headings and paragraphs in every version, with links to parallel passages; Russian headings for the Russian and Slavonic texts.",
+   "Psalm titles are set apart from verse 1.",
+   "Each version keeps its own chapter and verse numbers; Compare lines them up verse by verse."]},
+ {"date":"2026-10-18","commit":"e09c45f","title":"Uses in the original language","notes":[
+   "Uses lists every verse where a Hebrew or Greek word appears, in the original text with the word marked and your version underneath.",
+   "It also shows the word's forms with counts and how the KJV translates it."]},
+ {"date":"2026-10-18","commit":"8f719d2","title":"Strong's, BDB and Liddell","notes":[
+   "New dictionaries under Full entry: Strong's (Hebrew and Greek), the full Brown–Driver–Briggs and Liddell & Scott's Intermediate Greek–English Lexicon.",
+   "Verse references in BDB can be tapped to go to that verse.",
+   "Open ⤢ shows a long entry in a large window."]},
+ {"date":"2026-10-18","commit":"c64943d","title":"Home screen and themes","notes":[
+   "A home screen with Continue reading, Saved verses and Settings.",
+   "Themes: Auto, Light, Sepia and Dark.",
+   "Choose a Bible language and a default version to open in."]},
+ {"date":"2026-10-18","commit":"12482bc","site":1,"title":"Install help","notes":[
+   "An Install the app card with step-by-step instructions for Android, iPhone and links opened inside other apps."]},
+ {"date":"2026-10-19","commit":"c1fe9ce","site":1,"title":"Install help for HarmonyOS","notes":[
+   "Instructions for adding Lectio to the home screen on HarmonyOS (Huawei Browser)."]},
+ {"date":"2026-10-19","commit":null,"title":"Meanings in word details, and this changelog","notes":[
+   "Word details list a word's meanings, numbered, and ▸ marks the meaning the dictionary gives for the verse you're reading.",
+   "Settings › What's new shows every update. In the installed app you can switch back to an earlier version if an update causes problems."]}
+]
