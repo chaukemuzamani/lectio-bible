@@ -1,0 +1,220 @@
+{
+ "_note": "Hand-written meaning names for words whose automatic names read badly. Keys are the item keys shown in the strip (1, 2a, I.1 …). Checked against Abbott-Smith's entry for each word.",
+ "G60": {
+  "1": "frequenting the marketplace"
+ },
+ "G73": {
+  "3a": "a contest, struggle (the Christian life)"
+ },
+ "G223": {
+  "5": "perhaps the same as 4"
+ },
+ "G472": {
+  "2": "to withstand, resist"
+ },
+ "G600": {
+  "1": "to restore (to a former condition)"
+ },
+ "G844": {
+  "1": "of one's own accord (of persons)",
+  "2": "by itself (of things)"
+ },
+ "G1216": {
+  "2": "a Christian disciple (3 John 12)"
+ },
+ "G1223": {
+  "2(ii)b": "for this cause, therefore"
+ },
+ "G1473": {
+  "a": "I (emphatic: I am)",
+  "b": "I (contrasting with others)",
+  "c": "I (without emphasis)",
+  "d": "what have I to do with you?",
+  "e": "I (in other idioms)",
+  "f": "and I, even I, I also"
+ },
+ "G1722": {
+  "I.": "in, within, on, at, among (of place)",
+  "II.": "with (of accompaniment)",
+  "III.": "by, with (of means or instrument)",
+  "V.": "in (in compound words)"
+ },
+ "G1785": {
+  "1": "a charge, injunction, command",
+  "2a": "commandment (God's commandments)",
+  "2b": "commandment (given to Christ by the Father)",
+  "2c": "commandment (the precepts of Christ)",
+  "3": "commandment (in phrases)"
+ },
+ "G1861": {
+  "2b": "to profess"
+ },
+ "G1909": {
+  "I.1a": "upon, on (of place: where?)"
+ },
+ "G1984": {
+  "2": "office, charge (especially of an overseer)"
+ },
+ "G2250": {
+  "2": "day (a full day of 24 hours, including night)"
+ },
+ "G2316": {
+  "2a": "God (the one true God; without the article)",
+  "2b": "God (the one true God; usually with the article)"
+ },
+ "G2353": {
+  "1": "a nurseling (especially of animals)"
+ },
+ "G2386": {
+  "1": "a means of healing, remedy"
+ },
+ "G2433": {
+  "2": "to be propitious, merciful"
+ },
+ "G2530": {
+  "1": "according as, just as"
+ },
+ "G2532": {
+  "I.2b": "and (joining a positive to a negative sentence)"
+ },
+ "G2660": {
+  "3": "to be smitten (of strong emotion)"
+ },
+ "G2742": {
+  "1": "burning heat"
+ },
+ "G2904": {
+  "1": "strength (especially of the body)"
+ },
+ "G3056": {
+  "II.3": "proportion, analogy",
+  "III.": "the Word (Christ, in John)"
+ },
+ "G3129": {
+  "1": "to learn (especially by inquiry)"
+ },
+ "G3379": {
+  "3a": "lest? (in direct questions expecting the answer no)",
+  "3b": "whether perhaps (in indirect questions)"
+ },
+ "G3403": {
+  "b": "to remember (passive forms)"
+ },
+ "G3588": {
+  "II.3a": "the (with neuter adjectives)",
+  "II.3b": "the (with numerals)",
+  "II.3c": "the (with participles)",
+  "II.3d": "the (with adverbs)",
+  "II.3e": "the (with infinitives)",
+  "II.4": "the (before a quoted word or phrase)"
+ },
+ "G3739": {
+  "II.2c": "who, which (attracted to the case of the word it refers to)"
+ },
+ "G3772": {
+  "3b": "the kingdom of heaven"
+ },
+ "G3911": {
+  "1": "to set before (especially food)"
+ },
+ "G3947": {
+  "1": "to sharpen"
+ },
+ "G3962": {
+  "3c": "father (God as Father of those in covenant with him)"
+ },
+ "G3986": {
+  "2a": "a trial, testing (in a good or neutral sense)",
+  "2b": "a temptation (leading to sin)",
+  "2c": "a testing of God by man"
+ },
+ "G4023": {
+  "2": "to contain (of books)"
+ },
+ "G4052": {
+  "I.1a": "to remain over, be left over (of things)",
+  "I.1b": "to abound, be in abundance (of things)"
+ },
+ "G4098": {
+  "2a": "to fall prostrate (of persons)"
+ },
+ "G4103": {
+  "I.2": "trustworthy, reliable, sure (of things)"
+ },
+ "G4198": {
+  "a": "to depart, go one's way (also of dying)"
+ },
+ "G4217": {
+  "2": "of what sort?"
+ },
+ "G4231": {
+  "2": "to trade, do business"
+ },
+ "G4314": {
+  "III.2b": "for (of time)"
+ },
+ "G4375": {
+  "a": "lovely (of persons)"
+ },
+ "G4531": {
+  "a": "to shake (make insecure)"
+ },
+ "G4622": {
+  "2a": "Jerusalem (its inhabitants)",
+  "2b": "Jerusalem (Israel as a whole)"
+ },
+ "G4647": {
+  "2": "a thorn"
+ },
+ "G5009": {
+  "1": "a treasury"
+ },
+ "G5011": {
+  "b": "lowly in spirit, humble"
+ },
+ "G5048": {
+  "2b": "to bring to maturity, perfect (of persons, spiritually)"
+ },
+ "G5176": {
+  "3": "to eat"
+ },
+ "G5259": {
+  "III.": "by (in compound words)"
+ },
+ "G5449": {
+  "c": "nature (the regular order of nature)"
+ },
+ "G5485": {
+  "2a": "grace, kindness, goodwill (on the giver's part)"
+ },
+ "G5561": {
+  "1": "a space, place"
+ },
+ "G5613": {
+  "I.1": "as, like as, just as",
+  "II.2": "in order that"
+ },
+ "G2257": {
+  "a": "we (emphatic)",
+  "b": "of us (contrasting with others)",
+  "c": "of us (without emphasis)",
+  "d": "what have we to do with you?",
+  "e": "of us (in other idioms)",
+  "f": "and we, even we, we also"
+ },
+ "G2596": {
+  "II.4a": "in relation to, concerning",
+  "II.4b": "according to, after, like"
+ },
+ "G3326": {
+  "I.2": "with (in company with)",
+  "II.2": "after (of time)",
+  "III.1": "with (in association or community)",
+  "III.3": "after"
+ },
+ "G3694": {
+  "1b": "behind, back (of place)",
+  "2a": "after (of time)",
+  "2b": "behind, after (of place)"
+ }
+}

@@ -19,6 +19,9 @@ NT_ABBR={"Mat":"Matthew","Mrk":"Mark","Luk":"Luke","Jhn":"John","Act":"Acts","Ro
  "2Jo":"II John","2Jn":"II John","3Jo":"III John","3Jn":"III John","Jud":"Jude","Jde":"Jude","Rev":"Revelation of John"}
 for b in NT_ABBR.values(): assert b in PROT,b
 
+def bare(w):
+    import unicodedata
+    w=unicodedata.normalize("NFD",w.lower());return re.sub(r"[^α-ω]","","".join(c for c in w if not unicodedata.combining(c)).replace("ς","σ"))
 def plain(s):
     s=re.sub(r"<br\s*/?>"," ",s);s=re.sub(r"<[^>]+>","",s)
     return re.sub(r"\s+"," ",html.unescape(s)).strip()
@@ -74,7 +77,7 @@ def sense_label(part):
 def is_qualifier(lab): return bool(lab) and (len(lab)<=32 or bool(re.match(r"(?i)of\s",lab))) and bool(QUAL_RE.match(lab))
 def has_bold(part): return bool(re.search(r"<b>[^<]+</b>",part))
 
-USAGE_RE=re.compile(r"(?i)^(anarthrous|epanaleptic|special idioms?|in general|generally|more freq|with(out)? (the )?art|absol|esp\b|chiefly|freq)")
+USAGE_RE=re.compile(r"(?i)^(anarthrous|epanaleptic|proleptic|special idioms?|in general|generally|more freq|with(out)? (the )?art|absol|esp\b|chiefly|freq|connecting|expressing|explicative|copulative|ellips|elliptical|seq\b|pres\b|fut\b|aor|pf\b|impf|plpf|clauses|single words|imperat|subj|opt\b|inf\b|ptcp|indic|interrog|negative|emphatic|pleonastic|redundant|correlative|demonstrative|relative|reflexive|possessive|personal|enclitic|proclitic|ad[jv]\b|subst)")
 def usage_like(lab): return bool(lab) and (is_qualifier(lab) or bool(NOTE_RE.match(lab)) or bool(USAGE_RE.match(lab)))
 def tidy(lab):
     lab=re.sub(r"\s*\([^()]*(?:\d|cl\.|Hom|Plat|LXX|Arist|Polyb|Xen|Luc|al\.|MM|Bl\.|see)[^()]*\)","",lab)   # citations
@@ -82,7 +85,7 @@ def tidy(lab):
     return re.sub(r"\s+"," ",lab).strip(" ,;:.")
 def lowerfirst(q): return q[:1].lower()+q[1:] if q[:2]!=q[:2].upper() else q
 def compose(core,quals):
-    quals=[tidy(q) for q in quals if q and tidy(q)]
+    quals=[re.sub(r"\s*[()]\s*",", ",tidy(q)).strip(" ,") for q in quals if q and tidy(q)]
     core=tidy(core) if core else None
     if not core: return None
     m=re.match(r"^(.*?)\s*\(([^()]*)\)$",core)                 # “God (of the one true)” + “anarthrous” → one bracket
@@ -90,58 +93,112 @@ def compose(core,quals):
     quals=[q for i,q in enumerate(quals) if q.lower() not in [x.lower() for x in quals[:i]] and q.lower() not in core.lower()]
     return core+(" ("+"; ".join(lowerfirst(q) for q in quals)+")" if quals else "")
 
+ROMAN={"i":1,"ii":2,"iii":3,"iv":4,"v":5,"vi":6,"vii":7,"viii":8,"ix":9,"x":10}
+UROMAN={k.upper():v for k,v in ROMAN.items()}
+GREEKL="αβγδεζηθικλμνξοπρστυφχψω"
+MARK=re.compile(r"__\s*(?:([IVX]+)\.|(\d+)\.|\(([a-z]+)\)|\(([α-ω])\))")   # “(with)” is “(c)”: the brief lexicon expanded “c.” everywhere
+
+def outline(text):
+    """Abbott-Smith's numbered outline as a tree: I. › 1. › (a) › (i) / (α), nesting worked out from the numbering."""
+    root={"type":None,"ord":0,"key":"","text":"","kids":[],"up":None}
+    stack=[root];ms=list(MARK.finditer(text));absorbing=False
+    root["text"]=text[:ms[0].start()] if ms else text
+    for j,m in enumerate(ms):
+        end=ms[j+1].start() if j+1<len(ms) else len(text)
+        if m.group(1): typ,o,lab="R",UROMAN.get(m.group(1),0),m.group(1)+"."
+        elif m.group(2): typ,o,lab="N",int(m.group(2)),m.group(2)
+        elif m.group(3):
+            x=m.group(3)
+            if x=="with": x="c"
+            prevL=next((n for n in reversed(stack) if n["type"]=="L"),None)
+            if x in ROMAN and not (prevL and prevL["ord"]==ord(x[0])-97 and len(x)==1): typ,o,lab="r",ROMAN[x],f"({x})"
+            elif len(x)==1: typ,o,lab="L",ord(x)-96,x
+            else: typ,o,lab="r",0,f"({x})"
+        else: typ,o,lab="G",GREEKL.index(m.group(4))+1,m.group(4)
+        node={"type":typ,"ord":o,"lab":lab,"text":text[m.end():end],"kids":[]}
+        sib=next((k for k in range(len(stack)-1,0,-1) if stack[k]["type"]==typ and stack[k]["ord"]==o-1),None)
+        if sib is None and (absorbing or typ in("N","R") and any(n["type"] in("L","r","G") for n in stack) or typ=="L" and o==1 and stack[-1]["type"]=="L"):
+            stack[-1]["text"]+=m.group(0)+node["text"];absorbing=True;continue   # a list restarting inside (a)/(b), e.g. a cross-reference: part of that text
+        absorbing=False
+        if sib is not None: del stack[sib:]
+        elif o!=1:
+            same=next((k for k in range(len(stack)-1,0,-1) if stack[k]["type"]==typ),None)
+            if same is not None: del stack[same:]
+        parent=stack[-1];node["up"]=parent;parent["kids"].append(node);stack.append(node)
+    return root
+
+def leaves(node,path=()):
+    if not node["kids"]:
+        if path: yield path
+        return
+    for k in node["kids"]: yield from leaves(k,path+(k,))
+
+def keyof(path):
+    out=""
+    for n in path:
+        if n["type"]=="R": out+=n["lab"]
+        elif n["type"]=="N": out+=("." if out and not out.endswith(".") and out[-1].isalpha() else "")+n["lab"]
+        else: out+=n["lab"]
+    return out
+
+_STR=None
+def is_form_of(g,head):
+    """εἶ, ἐστί, ἐμοῦ … are forms of εἰμί / ἐγώ and share their entry; διαπαντός (from διά + πᾶς) is not."""
+    global _STR
+    if _STR is None: _STR=json.load(open(f"{DATA}/lex/strongs-grk.json"))
+    seen=set();todo=[(g,0)]
+    while todo:
+        x,d=todo.pop()
+        if x in seen or x not in _STR: continue
+        seen.add(x);der=_STR[x][3]
+        if d>0 and bare(_STR[x][0])==head: return True
+        if d<2 and re.search(r"(?i)\b(person|case|genitive|dative|accusative|plural|singular|infinitive|participle|tense|form|imperative|indicative|subjunctive|optative)\b",der) and not re.search(r"(?i)\band\b.*G\d",der):
+            todo+=[(m,d+1) for m in re.findall(r"G\d+",der)]
+    return False
+
 def greek():
-    """Items are the numbered senses, or their lettered sub-senses (“2a”) where Abbott-Smith divides them —
-    the verse references sit under the sub-senses, so the marker can point at exactly the right one.
-    A name is the definition, with usage notes (“of persons”, “in general”) in brackets after it."""
+    """Items are the leaves of each entry's outline (1, 2a, I.1, 1(ii)a …); the verse references sit under them,
+    so the marker points at exactly the right one. A name is the nearest definition, with the usage notes below it
+    (“of persons”, “in general”) in brackets."""
     lex=json.load(open(f"{DATA}/lex-grk.json"));res={}
     for g,key in lex["b"].items():
         e=lex["e"].get(key)
         if not e or not e[4]: continue
         t=e[4].replace("<br>","\n")
-        parts=re.split(r"__\s*(\d+)\.",t)
-        if len(parts)<5: continue
-        nums=[int(parts[i]) for i in range(1,len(parts),2)]
-        if nums!=list(range(1,len(nums)+1)): continue
+        if len(MARK.findall(t))<2: continue
+        hw=re.match(r"\s*<b>([^<]+)</b>",e[4])
+        if hw:
+            rest=e[4][hw.end():]
+            nxt=re.search(r"<br>\s*<b>([^<]+)</b>",rest)              # a second entry appended (δια-παντός, see διά … then διά's entry): drop it
+            if nxt and GREEKCH.search(nxt.group(1)) and re.search(r"\bsee\b",plain(rest[:nxt.start()])) and "__" not in rest[:nxt.start()]:
+                t=e[4][:hw.end()+nxt.start()].replace("<br>","\n")
+            if bare(plain(hw.group(1)).split(",")[0])!=bare(e[0]) and not is_form_of(g,bare(plain(hw.group(1)).split(",")[0])): continue
+            if len(MARK.findall(t))<2: continue
+        tree=outline(t)
         gloss=clean_label(re.sub(r"[/:].*","",e[3] or ""))
         verb=":V" in (e[2] or "")
         def usage(l): return usage_like(l) or (bool(l) and not verb and l.lower().startswith("to "))
-        def build(with_subs):
-            items=[];vmap={}
-            for i in range(1,len(parts),2):
-                n=int(parts[i]);seg=parts[i+1]
-                sp=re.split(r"__\s*\(([a-z])\)",seg) if with_subs else [seg]
-                own=sp[0];plab=sense_label(own)
-                pdef=None if usage(plab) else plab;pq=plab if usage(plab) else None
-                subs=[(sp[j],sp[j+1]) for j in range(1,len(sp),2)]
-                if len(subs)<2:
-                    lab=compose(pdef or (sense_label(subs[0][1]) if subs and not usage(sense_label(subs[0][1])) else None) or gloss,[pq])
-                    if not lab: return None
-                    items.append((str(n),lab))
-                    for bi,c,v in greek_refs(plain(seg)): vmap.setdefault(f"{bi}.{c}.{v}",len(items)-1)
-                    continue
-                group=[]
-                for letter,txt in subs:
-                    sl=sense_label(txt);bold=has_bold(txt)
-                    if sl and (usage(sl) or (not bold and pdef)): sdef,sq=None,(sl if usage(sl) else None)
-                    else: sdef,sq=sl,None
-                    lab=compose(sdef or pdef or gloss,[pq,sq])
-                    if not lab: continue
-                    refs=greek_refs(plain(txt))
-                    if group and group[-1][1]==lab: group[-1][2].extend(refs)
-                    else: group.append([f"{n}{letter}",lab,refs])
-                if not group: return None
-                if len(group)==1: group[0][0]=str(n)
-                for k2,lab,refs in group:
-                    items.append((k2,lab))
-                    for bi,c,v in refs: vmap.setdefault(f"{bi}.{c}.{v}",len(items)-1)
-            keys=[k for k,_ in items];labs=[l for _,l in items]
-            if len(set(keys))!=len(keys) or len(items)<2 or len(set(labs))<2: return None
-            return items,vmap
-        r=build(True) or build(False)
-        if not r: continue
-        items,vmap=r
-        res[g]=[[l for _,l in items],vmap,[k for k,_ in items]]
+        items=[];vmap={}
+        for path in leaves(tree):
+            labs=[sense_label(n["text"]) for n in path]
+            core=None;ci=None
+            for i in range(len(path)-1,-1,-1):
+                l=labs[i]
+                if l and not usage(l): core,ci=l,i;break
+            quals=[l for l in labs[(ci+1 if ci is not None else 0):] if l and usage(l)][-2:]
+            if ci is not None and ci==len(path)-1 and len(path)>1 and labs[ci-1] and usage(labs[ci-1]): quals=[labs[ci-1]]
+            lab=compose(core or gloss,quals)
+            if not lab: continue
+            k=keyof(path)
+            refs=greek_refs(plain(path[-1]["text"]))
+            if items and items[-1][1]==lab and len(path)>1 and items[-1][2] is path[-2]:
+                for bi,c,v in refs: vmap.setdefault(f"{bi}.{c}.{v}",len(items)-1)
+                continue
+            items.append((k,lab,path[-2] if len(path)>1 else None))
+            for bi,c,v in refs: vmap.setdefault(f"{bi}.{c}.{v}",len(items)-1)
+        keys=[k for k,_,_ in items];labs=[l for _,l,_ in items]
+        if len(items)<2 or len(set(keys))!=len(keys) or len(set(labs))<2: continue
+        res[g]=[labs,vmap,keys]
     return res
 
 # ------------------------------------------------------------------ Hebrew
@@ -243,8 +300,28 @@ def coverage(res,code):
                             tot+=1;hit+=f"{bi}.{ci+1}.{vi+1}" in res[k][1]
     return hit,tot
 
+EXPAND=[(r"seq\. εἰς, cf\. Heb\. הָיָה לְ, , a vernac\. usage","followed by εἰς: to become"),
+        (r"\baor\.,? = Lat\. fut\. pf\.","aorist"),(r"\bpres\b\.?","present tense"),(r"\bfut\b\.?","future tense"),(r"\baor\b\.?","aorist"),
+        (r"\bimpf\b\.?","imperfect"),(r"\bplpf\b\.?","pluperfect"),(r"\bpf\b\.?","perfect"),(r"\bLat\.\s*","Latin "),(r"\besp\.","especially"),
+        (r"\bi\.e\.","that is"),(r"\bin cl\.,?\s*","in classical Greek, "),(r"\bcl\.","classical Greek"),(r"\bMid\.","middle"),(r"\bpass\.","passive"),
+        (r"\bincl\.","including"),(r"\bin composition\b","in compound words"),(r"\bperh\.","perhaps"),(r"\bepanaleptic\b","resuming a word already used"),(r"\bproleptic\b","anticipating what follows"),
+        (r"\bbefore the art\b\.?","before the article"),(r"\bellipses; of the copula","with “is” left unsaid"),(r"\bellipses; of the predicate","with the predicate left unsaid"),(r"\s*\(AS\)|†",""),(r",\s*,",","),(r"\(\s*\)","")]
+def expand(l):
+    for a,b in EXPAND: l=re.sub(a,b,l)
+    return re.sub(r"\s+"," ",l).strip(" ,;")
+def apply_overrides(G):
+    O=json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"senses_overrides.json"),encoding="utf-8"))
+    n=0
+    for g,(labs,vm,keys) in G.items():
+        for i,k in enumerate(keys):
+            labs[i]=expand(labs[i])
+            if g in O and k in O[g]: labs[i]=O[g][k];n+=1
+    missing=[(g,k) for g,m in O.items() if not g.startswith("_") for k in m if g not in G or k not in G[g][2]]
+    return n,missing
+
 if __name__=="__main__":
-    G=greek();H=hebrew(step_hebrew_labels())
+    G=greek();n,missing=apply_overrides(G);print("hand-written names:",n,"| not applied:",missing)
+    H=hebrew(step_hebrew_labels())
     for name,obj in (("grk",G),("heb",H)):
         json.dump(obj,open(f"{DATA}/lex/senses-{name}.json","w"),ensure_ascii=False,separators=(",",":"))
     print("greek words",len(G),"coverage",coverage(G,"GRK"))
