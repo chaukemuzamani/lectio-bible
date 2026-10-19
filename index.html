@@ -211,7 +211,8 @@ em.sup{font-style:italic;color:var(--ink-soft)}
 .s-ctl button:hover{color:var(--link);border-color:var(--link)}
 .s-ctl button.on{background:var(--link);border-color:var(--link);color:var(--leaf)}
 .s2,.s3{font-size:12.5px;line-height:1.45;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.s3{font-family:var(--body);font-size:13.5px;color:var(--ink)}
+.s3{font-family:var(--body);font-size:13.5px;color:var(--ink);white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2}
+.s3 .sn{color:var(--rubric);font-family:var(--ui);font-size:12px}
 .s3 b{font-weight:600}
 .approx{color:var(--link);font-weight:600}
 .dock-more{border-top:1px solid var(--rule);max-height:min(44vh,380px);overflow:auto;padding-block:10px 14px}
@@ -945,6 +946,29 @@ function lexClick(e){
 }
 $("#dockMore").addEventListener("click",lexClick);
 $("#lexSheetBody").addEventListener("click",lexClick);
+/* numbered meanings for the details strip ("tongue" → 1. the tongue · 2. a tongue, language) */
+function senseList(def,gloss){
+  if(!def)return [];
+  const t=def.replace(/<br\s*\/?>/gi,"\n").replace(/<[^>]+>/g,m=>/^<\/?b>$/i.test(m)?m:"").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">");
+  const clean=x=>x.replace(/<\/?b>/gi,"").replace(/\s+/g," ").replace(/[\s,;:.]+$/,"").trim();
+  const norm=x=>x.toLowerCase().replace(/^(the|a|an|to)\s+/,"").replace(/[^\p{L}\s]/gu,"").trim();
+  let out=[];
+  // Greek (Abbott-Smith): "__1. <b>sense</b> …"
+  const g=[...t.matchAll(/__\s*(\d+)\.\s*([^\n]*)/g)];
+  if(g.length>=2){
+    for(const m of g){const b=m[2].match(/<b>([^<]+)<\/b>/i);const s=clean(b?b[1]:m[2].split(/[:;(]/)[0]);if(s&&s.length<=60)out.push(s)}
+  }else{
+    // Hebrew / outline style: "1) sense", "1a) sense"
+    const items=[...t.replace(/<\/?b>/gi,"").matchAll(/(?:^|\s|\n)(\d+)([a-z]?)(\d*)\)\s*([^\n]*?)(?=\s+\d+[a-z]?\d*[a-z]?\)|\n|$)/g)]
+      .map(m=>({lv:m[3]?3:m[2]?2:1,s:clean(m[4])})).filter(x=>x.s&&x.s.length<=70);
+    const l1=items.filter(x=>x.lv===1),l2=items.filter(x=>x.lv===2);
+    out=(l1.length>=2?l1:(l2.length?l2:l1)).map(x=>x.s);
+  }
+  const seen=new Set(),res=[];
+  for(const s of out){if(!/^\p{L}/u.test(s))continue;const k=norm(s);if(!k||seen.has(k))continue;seen.add(k);res.push(s)}
+  if(res.length<2)return [];
+  return res.slice(0,6);
+}
 function readable(t){return t.replace(/\./g,"").replace(/[\[\]]/g,"").toLowerCase()}
 function textOf(html){const d=document.createElement("div");d.innerHTML=html.replace(/<br>/g," ");return d.textContent.replace(/\s+/g," ").trim()}
 const MINOR=new Set(["H853","G3588"]);
@@ -980,7 +1004,8 @@ async function showDetails(r){
   $("#sMain").innerHTML='<span class="s-orig"'+(he?' lang="he" dir="rtl"':' lang="el"')+'>'+esc(surf)+'</span><span class="s-tr">'+esc(tr)+'</span><span class="s-gl">'+esc(ctxGloss||le[3]||"")+'</span><span class="code">'+esc(main.key)+'</span>';
   const mp=expandMorph(main.morph);
   $("#s2").innerHTML=(mp.length?esc(mp.map(([c,x])=>shortMorph(x)||c).join(" + ")):'')+(word?' · <span>'+esc(src)+' “'+esc(word)+'”</span>':' · '+esc(src))+' · '+esc(ref)+(r.approx?' · <span class="approx" title="Matched statistically: this version has no word tags">≈ approximate match</span>':'');
-  $("#s3").innerHTML='<b>'+esc(le[3]||"")+'</b>'+(le[4]?' — '+esc(textOf(le[4])):'');
+  const sl=senseList(le[4],le[3]);
+  $("#s3").innerHTML='<b>'+esc(le[3]||"")+'</b>'+(sl.length?' — '+sl.map((x,i)=>'<span class="sn">'+(i+1)+'.</span> '+esc(x)).join(' <span class="sn">·</span> '):(le[4]?' — '+esc(textOf(le[4])):''));
   // full entry (extension)
   let left='<dl class="kv">';
   if(word)left+='<dt>'+esc(src)+'</dt><dd>“'+esc(word)+'”'+(r.approx?' <span class="approx">≈ approximate</span>':'')+'</dd>';
