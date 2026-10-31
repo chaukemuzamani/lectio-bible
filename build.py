@@ -15,7 +15,11 @@ rep('''(hlCol?'':'<p class="muted" style="font-size:12px;margin-top:12px">These 
 rep("fillSelects();syncSettings();render();",r'''fillSelects();syncSettings();render();
 /* ---------- installable app: offline cache + install ---------- */
 if("serviceWorker" in navigator&&(location.protocol==="https:"||location.hostname==="localhost"||location.hostname==="127.0.0.1")){
-  navigator.serviceWorker.register("sw.js").catch(()=>{});
+  navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(reg=>{
+    // when an update has been installed, show it straight away instead of on the next start
+    let reloaded=false;navigator.serviceWorker.addEventListener("controllerchange",()=>{if(!reloaded&&sessionStorage.getItem("lectio.updated")!=="1"){reloaded=true;try{sessionStorage.setItem("lectio.updated","1")}catch(e){}location.reload()}});
+    document.addEventListener("visibilitychange",()=>{if(!document.hidden)reg.update().catch(()=>{})});
+  }).catch(()=>{});
   $("#offRow").hidden=false;
   const offUrls=async id=>{
     const vi=vinfo(id),u=[];
@@ -152,7 +156,8 @@ self.addEventListener("fetch",e=>{{
     // earlier versions: from the network, kept for offline use, never mixed with the current app
     e.respondWith(caches.open("lectio-versions").then(async c=>{{try{{const res=await fetch(r);if(res.ok)c.put(r,res.clone());return res}}catch(err){{return (await c.match(r,{{ignoreSearch:true}}))||Response.error()}}}}));return}}
   if(r.mode==="navigate"||u.pathname.endsWith("/index.html")){{
-    e.respondWith(fetch(r).then(res=>{{caches.open(SHELL).then(c=>c.put("index.html",res.clone()));return res}}).catch(()=>caches.match("index.html")));return}}
+    // always ask GitHub for the newest page (not the browser's 10-minute copy); the saved page is only for offline use
+    e.respondWith(fetch(r.url,{{cache:"no-cache",credentials:"same-origin"}}).then(res=>{{if(res.ok)caches.open(SHELL).then(c=>c.put("index.html",res.clone()));return res}}).catch(()=>caches.match("index.html")));return}}
   if(u.pathname.includes("/data/")){{
     // Bible data: from the device when saved, otherwise download and keep it
     e.respondWith(caches.open(DATA).then(async c=>{{const hit=await c.match(r,{{ignoreSearch:true}});if(hit)return hit;const res=await fetch(r);if(res.ok)c.put(r,res.clone());return res}}));return}}

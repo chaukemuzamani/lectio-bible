@@ -1,5 +1,5 @@
-// Lectio service worker — build 202610310848
-const SHELL="lectio-shell-202610310848",DATA="lectio-data",FONTS="lectio-fonts";
+// Lectio service worker — build 202610310855
+const SHELL="lectio-shell-202610310855",DATA="lectio-data",FONTS="lectio-fonts";
 const SHELL_FILES=["./","index.html","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","icons/apple-touch-icon.png","icons/favicon-32.png","data/morph.json","data/vrs.json"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(SHELL).then(c=>c.addAll(SHELL_FILES)).then(()=>self.skipWaiting()))});
 // On update: drop old app shells, and refresh only the saved Bible files whose contents changed
@@ -23,7 +23,8 @@ self.addEventListener("fetch",e=>{
     // earlier versions: from the network, kept for offline use, never mixed with the current app
     e.respondWith(caches.open("lectio-versions").then(async c=>{try{const res=await fetch(r);if(res.ok)c.put(r,res.clone());return res}catch(err){return (await c.match(r,{ignoreSearch:true}))||Response.error()}}));return}
   if(r.mode==="navigate"||u.pathname.endsWith("/index.html")){
-    e.respondWith(fetch(r).then(res=>{caches.open(SHELL).then(c=>c.put("index.html",res.clone()));return res}).catch(()=>caches.match("index.html")));return}
+    // always ask GitHub for the newest page (not the browser's 10-minute copy); the saved page is only for offline use
+    e.respondWith(fetch(r.url,{cache:"no-cache",credentials:"same-origin"}).then(res=>{if(res.ok)caches.open(SHELL).then(c=>c.put("index.html",res.clone()));return res}).catch(()=>caches.match("index.html")));return}
   if(u.pathname.includes("/data/")){
     // Bible data: from the device when saved, otherwise download and keep it
     e.respondWith(caches.open(DATA).then(async c=>{const hit=await c.match(r,{ignoreSearch:true});if(hit)return hit;const res=await fetch(r);if(res.ok)c.put(r,res.clone());return res}));return}

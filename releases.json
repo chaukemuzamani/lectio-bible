@@ -132,7 +132,8 @@
   "commit": null,
   "title": "Chapter buttons always in reach",
   "notes": [
-   "Previous and next chapter buttons now float at the sides of the screen (in the bottom corners on phones), so you can turn the chapter without scrolling to the end. The buttons at the bottom of the chapter are still there."
+   "Previous and next chapter buttons now float at the sides of the screen (in the bottom corners on phones), so you can turn the chapter without scrolling to the end. The buttons at the bottom of the chapter are still there.",
+   "Updates arrive sooner: the installed app now checks for a new version whenever it is opened or brought back to the screen, and switches to it straight away."
   ]
  }
 ]
