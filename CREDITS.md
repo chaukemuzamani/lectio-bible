@@ -8,6 +8,10 @@ The app code is © Чауке М.М. The texts and data keep their own licences:
 
 **CC BY 4.0:** Hebrew and Greek tagged texts (TAHOT, TAGNT), brief lexicons (TBESH, TBESG) and grammar expansions (TEHMC, TEGMC) by STEPBible.org / Tyndale House Cambridge, reformatted for this app. Source: https://github.com/STEPBible/STEPBible-Data
 
+**Bible dictionary:**
+- Easton's Bible Dictionary (1897), Smith's Bible Dictionary (1884) and Hitchcock's Bible Names Dictionary (1869): public domain; Christian Classics Ethereal Library ThML editions, taken from github.com/neuu-org/bible-dictionary-dataset (CC BY 4.0), converted for this app with their verse references kept as links.
+- The International Standard Bible Encyclopedia (1915, James Orr, ed.): public domain; CrossWire SWORD module ISBE 2.2, as converted to JSON by github.com/brandonr2630/coc-website.
+
 **Dictionaries (Full entry):**
 - Strong's Hebrew and Greek dictionaries: Open Scriptures (github.com/openscriptures/strongs), CC BY-SA.
 - Brown–Driver–Briggs, *A Hebrew and English Lexicon of the Old Testament* (1906), public domain; unabridged digital text by Eliran Wong (github.com/eliranwong/unabridged-BDB-Hebrew-lexicon), reformatted for this app with verse references mapped to the reader.

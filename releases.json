@@ -108,12 +108,23 @@
  },
  {
   "date": "2026-10-19",
-  "commit": null,
+  "commit": "b0351ab",
   "title": "Meanings for the most common words",
   "notes": [
    "Word details now list meanings for the most common Greek words too — λόγος, ἐν, εἰς, διά, καί, εἰμί, ὁ and about 300 others — whose dictionary entries are divided into I., II. as well as 1., 2. (John 1:1 λόγος: ▸III. the Word).",
    "Dictionary shorthand is written out (“pres” → present tense, “esp.” → especially, “cl.” → classical Greek), and about 100 meaning names were written by hand where the dictionary's wording didn't make a clear name.",
    "Words whose dictionary entry belongs to a different word (διαπαντός, which uses διά's) show the dictionary text instead of the wrong meanings."
+  ]
+ },
+ {
+  "date": "2026-10-31",
+  "commit": null,
+  "title": "Bible dictionary",
+  "notes": [
+   "A Bible dictionary with Easton’s (1897), Smith’s (1884), the International Standard Bible Encyclopedia (1915) and Hitchcock’s meanings of Bible names: 11,365 entries, opened from the home screen.",
+   "Search it, or browse by letter; each article has a tab per dictionary, and its 134,000 verse references open the verse in the version you’re reading.",
+   "Word details: the Dictionary button opens the article for the word you tapped (Jerusalem, Aaron, tongue …), and Full entry shows what a name means.",
+   "Search also lists matching dictionary entries above the verses."
   ]
  }
 ]
