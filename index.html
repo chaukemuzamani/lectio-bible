@@ -373,6 +373,37 @@ body.at-home .side-nav{display:none!important}
 .vmenu .sep{width:1px;align-self:stretch;background:var(--rule);margin:0 2px}
 .vmenu .tx{background:none;border:1px solid var(--rule);border-radius:5px;padding:3px 9px;cursor:pointer;color:var(--ink)}
 .vmenu .tx:hover{border-color:var(--ink-soft)}
+.vmenu{flex-wrap:wrap;max-width:calc(100vw - 24px)}
+.vmenu .vm-br{flex-basis:100%;height:0}
+/* verse study: cross-references and commentaries */
+.st-head{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.st-head h2{margin:0;font-family:var(--display);font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st-step{background:none;border:1px solid var(--rule);border-radius:6px;width:30px;height:30px;cursor:pointer;color:var(--ink-soft);flex:none}
+.st-step:hover{color:var(--rubric);border-color:var(--rubric)}
+.st-tabs{display:flex;gap:0;border-bottom:1px solid var(--rule);margin:-4px 0 14px}
+.st-tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:8px 14px;cursor:pointer;color:var(--ink-soft);font-weight:500}
+.st-tabs button.on{color:var(--ink);border-bottom-color:var(--rubric)}
+.st-sub{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.st-sub button{background:var(--leaf);border:1px solid var(--rule);border-radius:999px;padding:4px 11px;cursor:pointer;color:var(--ink);font-size:13px}
+.st-sub button.on{background:var(--rubric);border-color:var(--rubric);color:var(--leaf)}
+.st-sub button:disabled{opacity:.4;cursor:default}
+.st-verse{font-family:var(--body);font-size:15px;line-height:1.6;color:var(--ink-soft);margin:0 0 14px;padding:0 0 12px;border-bottom:1px dashed var(--rule)}
+.xr-row{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--rule);padding:9px 2px;cursor:pointer;color:inherit}
+.xr-row:hover b{color:var(--rubric)}
+.xr-row b{font-size:13.5px;font-weight:600;margin-right:8px}
+.xr-row .xr-v{font-size:11px;color:var(--ink-soft)}
+.xr-row .xr-t{display:block;font-family:var(--body);font-size:15px;line-height:1.55;margin-top:3px}
+.xr-more{margin-top:10px;background:none;border:1px solid var(--rule);border-radius:6px;padding:6px 12px;cursor:pointer;color:var(--ink)}
+.tsk-g{margin:0 0 10px}.tsk-g i{display:block;font-family:var(--body);font-size:15px;margin-bottom:4px}
+.tsk-g .xref{margin-right:10px;color:var(--link);text-decoration:none;font-size:13.5px;white-space:nowrap}
+.tsk-g .xref:hover{text-decoration:underline}
+#studyBody .lexdef{max-width:none;font-size:15.5px;line-height:1.65}
+#studyBody .lexdef p{margin:0 0 .75em}
+#studyBody .lexdef .xref{color:var(--link);text-decoration:none;white-space:nowrap}
+#studyBody .lexdef .xref:hover{text-decoration:underline}
+.cm-sec{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft)}
+.cm-entry+.cm-entry{border-top:1px dashed var(--rule);padding-top:12px;margin-top:4px}
+.cm-intro{margin:0 0 14px}.cm-intro summary{cursor:pointer;color:var(--link);font-size:13px}
 .hl-list{display:flex;flex-direction:column}
 .hl-item{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--rule);padding:10px 4px;cursor:pointer;font-family:var(--body);font-size:15px;line-height:1.5}
 .hl-item:hover{background:var(--rubric-soft)}
@@ -490,7 +521,7 @@ body.at-home .side-nav{display:none!important}
       <p><b>Footnotes.</b> The KJV translators' margin notes, and the footnotes of the BSB and the WEB (Yahweh edition), appear as red letters in the text and in a list below each chapter.</p>
       <p><b>Greek editions.</b> NA28, SBL, Textus Receptus and Byzantine each use that edition's choice of words, drawn from the STEPBible amalgamated text. Spelling and word order follow the STEPBible base text, so they can differ slightly from the printed editions.</p>
       <p><b>Numbering.</b> Each version keeps its own chapter and verse numbers: the Synodal and Church Slavonic use Septuagint psalm numbers (Psalm 23 is 22) and count psalm titles as verses, JPS follows the Hebrew Bible (Malachi 4 is Malachi 3:19–24), Douay-Rheims the Vulgate and Brenton the Septuagint. Compare lines the two versions up verse by verse and shows the other version's own verse numbers where they differ. Highlights stay on the same verse in every version.</p>
-      <p><b>Licences.</b> Public domain: KJV, WEB, BSB, ASV, YLT, Darby, Webster, Geneva, Douay-Rheims, Tyndale, BBE, Brenton, UKJV, OEB, NHEB-ME, WMB, JPS 1917, Synodal, Church Slavonic, Makarius. CC BY-SA 4.0: LSV (Covenant Press), FBV, Shona (© 2017 Biblica). Hebrew and Greek tagging, lexicons and grammar: STEPBible.org / Tyndale House, CC BY 4.0, reformatted for this reader (source: github.com/STEPBible). Bible dictionary: Easton’s Bible Dictionary (1897), Smith’s Bible Dictionary (1884) and Hitchcock’s Bible Names (1869), public domain, from the Christian Classics Ethereal Library editions (via github.com/neuu-org/bible-dictionary-dataset, CC BY 4.0); the International Standard Bible Encyclopedia (1915), public domain, from the CrossWire ISBE module (as converted by github.com/brandonr2630/coc-website). Dictionaries under “Full entry”: Strong’s Hebrew and Greek dictionaries from Open Scriptures (CC BY-SA); Brown–Driver–Briggs (1906, public domain), digital text by Eliran Wong (github.com/eliranwong/unabridged-BDB-Hebrew-lexicon); Liddell & Scott’s Intermediate Greek–English Lexicon, text provided by the Perseus Digital Library with funding from The Annenberg CPB/Project, CC BY-SA 3.0 US (via github.com/blinskey/middle-liddell). NASB, NKJV, ESV, CJB, NIV, NLT, CSB, AMP, the modern Russian translations and all Xitsonga Bibles are under copyright, so they open on Bible.com.</p>
+      <p><b>Licences.</b> Public domain: KJV, WEB, BSB, ASV, YLT, Darby, Webster, Geneva, Douay-Rheims, Tyndale, BBE, Brenton, UKJV, OEB, NHEB-ME, WMB, JPS 1917, Synodal, Church Slavonic, Makarius. CC BY-SA 4.0: LSV (Covenant Press), FBV, Shona (© 2017 Biblica). Hebrew and Greek tagging, lexicons and grammar: STEPBible.org / Tyndale House, CC BY 4.0, reformatted for this reader (source: github.com/STEPBible). Cross-references: OpenBible.info (CC BY, readers’ votes; via github.com/scrollmapper/bible_databases) and the Treasury of Scripture Knowledge (public domain). Commentaries (public domain): Matthew Henry, Jamieson-Fausset-Brown, Barnes (New Testament), Clarke and Spurgeon’s Treasury of David from the CrossWire SWORD modules (as packaged by github.com/CalvinMagezi/berea), and Gill from the Free Use Bible API (via github.com/joathanmf/bibliaco-dados). Bible dictionary: Easton’s Bible Dictionary (1897), Smith’s Bible Dictionary (1884) and Hitchcock’s Bible Names (1869), public domain, from the Christian Classics Ethereal Library editions (via github.com/neuu-org/bible-dictionary-dataset, CC BY 4.0); the International Standard Bible Encyclopedia (1915), public domain, from the CrossWire ISBE module (as converted by github.com/brandonr2630/coc-website). Dictionaries under “Full entry”: Strong’s Hebrew and Greek dictionaries from Open Scriptures (CC BY-SA); Brown–Driver–Briggs (1906, public domain), digital text by Eliran Wong (github.com/eliranwong/unabridged-BDB-Hebrew-lexicon); Liddell & Scott’s Intermediate Greek–English Lexicon, text provided by the Perseus Digital Library with funding from The Annenberg CPB/Project, CC BY-SA 3.0 US (via github.com/blinskey/middle-liddell). NASB, NKJV, ESV, CJB, NIV, NLT, CSB, AMP, the modern Russian translations and all Xitsonga Bibles are under copyright, so they open on Bible.com.</p>
       <p>Text sources: scrollmapper/bible_databases, BibleNLP/ebible, seven1m/open-bibles, STEPBible-Data.</p>
     </div>
   </div></div></div>
@@ -498,6 +529,9 @@ body.at-home .side-nav{display:none!important}
 <div class="scrim" id="dictSheet" hidden><div class="sheet" role="dialog" aria-label="Bible dictionary">
   <div class="sheet-head"><input class="search-in" id="dictIn" type="search" placeholder="Search the dictionaries: Aaron, Passover …" autocomplete="off"><button class="icon-btn" data-close aria-label="Close">✕</button></div>
   <div class="sheet-body" id="dictBody"></div></div></div>
+<div class="scrim" id="studySheet" hidden><div class="sheet" role="dialog" aria-label="Verse study">
+  <div class="sheet-head"><div class="st-head"><button class="st-step" id="stPrev" aria-label="Previous verse">‹</button><h2 id="stTitle">Verse</h2><button class="st-step" id="stNext" aria-label="Next verse">›</button></div><button class="icon-btn" data-close aria-label="Close">✕</button></div>
+  <div class="sheet-body" id="studyBody"></div></div></div>
 <div class="scrim" id="lexSheet" hidden><div class="sheet" role="dialog" aria-label="Dictionary entry">
   <div class="sheet-head"><h2 id="lexTitle">Dictionary</h2><button class="icon-btn" data-close aria-label="Close">✕</button></div>
   <div class="sheet-body" id="lexSheetBody"></div></div></div>
@@ -516,7 +550,7 @@ body.at-home .side-nav{display:none!important}
 <div class="toast" id="toast"></div>
 
 <script>
-/*RELEASES*/const RELEASES=[{"v":"1.13","date":"2026-10-31","title":"Chapter buttons always in reach","notes":["Previous and next chapter buttons now float at the sides of the screen (in the bottom corners on phones), so you can turn the chapter without scrolling to the end. The buttons at the bottom of the chapter are still there.","Updates arrive sooner: the installed app now checks for a new version whenever it is opened or brought back to the screen, and switches to it straight away."],"id":null},{"v":"1.12","date":"2026-10-31","title":"Bible dictionary","notes":["A Bible dictionary with Easton’s (1897), Smith’s (1884), the International Standard Bible Encyclopedia (1915) and Hitchcock’s meanings of Bible names: 11,365 entries, opened from the home screen.","Search it, or browse by letter; each article has a tab per dictionary, and its 134,000 verse references open the verse in the version you’re reading.","Word details: the Dictionary button opens the article for the word you tapped (Jerusalem, Aaron, tongue …), and Full entry shows what a name means.","Search also lists matching dictionary entries above the verses."],"id":"8cf64fc"},{"v":"1.11","date":"2026-10-19","title":"Meanings for the most common words","notes":["Word details now list meanings for the most common Greek words too — λόγος, ἐν, εἰς, διά, καί, εἰμί, ὁ and about 300 others — whose dictionary entries are divided into I., II. as well as 1., 2. (John 1:1 λόγος: ▸III. the Word).","Dictionary shorthand is written out (“pres” → present tense, “esp.” → especially, “cl.” → classical Greek), and about 100 meaning names were written by hand where the dictionary's wording didn't make a clear name.","Words whose dictionary entry belongs to a different word (διαπαντός, which uses διά's) show the dictionary text instead of the wrong meanings."],"id":"b0351ab"},{"v":"1.10","date":"2026-10-19","title":"Meanings checked word by word","notes":["Every Greek word's meanings were checked: where Abbott-Smith divides a meaning into (a), (b)…, these now appear as 1a, 1b, and ▸ marks the exact one for your verse (πληρόω in Acts 2:2: ▸1a. to fill … (of things)).","Meanings are named by their definition, with notes like “of persons” or “in general” in brackets, instead of sub-headings or grammar notes.","Words whose dictionary entry can't be divided cleanly show the dictionary text as before, rather than a guessed list."],"id":"30f4b14"},{"v":"1.9","date":"2026-10-19","title":"Clearer meaning names","notes":["Word details: Greek meanings are named by their definition instead of a sub-heading (πληρόω: “1. to fill, make full” rather than “1. of things”); about 150 words corrected."],"id":"f540d7d"},{"v":"1.8","date":"2026-10-19","title":"Meanings in word details, and this changelog","notes":["Word details list a word's meanings, numbered, and ▸ marks the meaning the dictionary gives for the verse you're reading.","Settings › What's new shows every update. In the installed app you can switch back to an earlier version if an update causes problems."],"id":"8198655"},{"v":"1.7","date":"2026-10-19","title":"Install help for HarmonyOS","notes":["Instructions for adding Lectio to the home screen on HarmonyOS (Huawei Browser)."],"id":"c1fe9ce","site":1},{"v":"1.6","date":"2026-10-18","title":"Install help","notes":["An Install the app card with step-by-step instructions for Android, iPhone and links opened inside other apps."],"id":"12482bc","site":1},{"v":"1.5","date":"2026-10-18","title":"Home screen and themes","notes":["A home screen with Continue reading, Saved verses and Settings.","Themes: Auto, Light, Sepia and Dark.","Choose a Bible language and a default version to open in."],"id":"c64943d"},{"v":"1.4","date":"2026-10-18","title":"Strong's, BDB and Liddell","notes":["New dictionaries under Full entry: Strong's (Hebrew and Greek), the full Brown–Driver–Briggs and Liddell & Scott's Intermediate Greek–English Lexicon.","Verse references in BDB can be tapped to go to that verse.","Open ⤢ shows a long entry in a large window."],"id":"8f719d2"},{"v":"1.3","date":"2026-10-18","title":"Uses in the original language","notes":["Uses lists every verse where a Hebrew or Greek word appears, in the original text with the word marked and your version underneath.","It also shows the word's forms with counts and how the KJV translates it."],"id":"e09c45f"},{"v":"1.2","date":"2026-10-18","title":"Quotation marks, headings and psalm titles","notes":["Quotation marks added where a version prints none (KJV, ASV, Darby, Webster, UKJV, Geneva, Douay-Rheims, Tyndale, BBE, Brenton, Synodal, Church Slavonic, Makarius); Russian uses «…» and „…“.","Words of Jesus: the red runs exactly from his opening to his closing quotation mark, so the narrator stays black.","Section headings and paragraphs in every version, with links to parallel passages; Russian headings for the Russian and Slavonic texts.","Psalm titles are set apart from verse 1.","Each version keeps its own chapter and verse numbers; Compare lines them up verse by verse."],"id":"cb5fdf7"},{"v":"1.1","date":"2026-10-18","title":"Words of Jesus in red","notes":["The words of Jesus are shown in red in every version.","The installed app now downloads only the Bible files that changed in an update."],"id":"ab06c08"},{"v":"1.0","date":"2026-10-18","title":"First installable version","notes":["29 Bibles to read and compare side by side: English (KJV, BSB, WEB, LSV, ASV, YLT, Geneva, Douay-Rheims and more), Messianic and Jewish, the Hebrew Old Testament, four Greek New Testaments, Russian Synodal, Church Slavonic, Makarius and Shona.","Word links between the two columns, and word details with the Hebrew or Greek, grammar and meaning.","Footnotes from the KJV, BSB and WEB; highlights that follow the verse into every version; search by words, reference or Strong's number.","Copyrighted versions (NASB, NKJV, ESV, NIV and others, modern Russian and Xitsonga Bibles) open the same chapter on Bible.com.","Installable on phones and computers, with offline reading."],"id":"5fb3fcf"}];/*END RELEASES*/
+/*RELEASES*/const RELEASES=[{"v":"1.14","date":"2026-10-31","title":"Cross-references and commentaries","notes":["Tap a verse number, then Cross-references or Commentary.","Cross-references: OpenBible.info’s 341,000 links, most linked by readers first, each with its verse text in the version you’re reading; or the Treasury of Scripture Knowledge’s 300,000 references grouped by word.","Commentaries: Matthew Henry, Jamieson-Fausset-Brown, Barnes (New Testament), Clarke, Gill and Spurgeon’s Treasury of David (Psalms). They open on the verse you tapped; “Read the whole chapter” shows the rest, and verse references in them can be tapped.","‹ and › step to the previous or next verse without closing the window."],"id":null},{"v":"1.13","date":"2026-10-31","title":"Chapter buttons always in reach","notes":["Previous and next chapter buttons now float at the sides of the screen (in the bottom corners on phones), so you can turn the chapter without scrolling to the end. The buttons at the bottom of the chapter are still there.","Updates arrive sooner: the installed app now checks for a new version whenever it is opened or brought back to the screen, and switches to it straight away."],"id":"a61fb7d"},{"v":"1.12","date":"2026-10-31","title":"Bible dictionary","notes":["A Bible dictionary with Easton’s (1897), Smith’s (1884), the International Standard Bible Encyclopedia (1915) and Hitchcock’s meanings of Bible names: 11,365 entries, opened from the home screen.","Search it, or browse by letter; each article has a tab per dictionary, and its 134,000 verse references open the verse in the version you’re reading.","Word details: the Dictionary button opens the article for the word you tapped (Jerusalem, Aaron, tongue …), and Full entry shows what a name means.","Search also lists matching dictionary entries above the verses."],"id":"8cf64fc"},{"v":"1.11","date":"2026-10-19","title":"Meanings for the most common words","notes":["Word details now list meanings for the most common Greek words too — λόγος, ἐν, εἰς, διά, καί, εἰμί, ὁ and about 300 others — whose dictionary entries are divided into I., II. as well as 1., 2. (John 1:1 λόγος: ▸III. the Word).","Dictionary shorthand is written out (“pres” → present tense, “esp.” → especially, “cl.” → classical Greek), and about 100 meaning names were written by hand where the dictionary's wording didn't make a clear name.","Words whose dictionary entry belongs to a different word (διαπαντός, which uses διά's) show the dictionary text instead of the wrong meanings."],"id":"b0351ab"},{"v":"1.10","date":"2026-10-19","title":"Meanings checked word by word","notes":["Every Greek word's meanings were checked: where Abbott-Smith divides a meaning into (a), (b)…, these now appear as 1a, 1b, and ▸ marks the exact one for your verse (πληρόω in Acts 2:2: ▸1a. to fill … (of things)).","Meanings are named by their definition, with notes like “of persons” or “in general” in brackets, instead of sub-headings or grammar notes.","Words whose dictionary entry can't be divided cleanly show the dictionary text as before, rather than a guessed list."],"id":"30f4b14"},{"v":"1.9","date":"2026-10-19","title":"Clearer meaning names","notes":["Word details: Greek meanings are named by their definition instead of a sub-heading (πληρόω: “1. to fill, make full” rather than “1. of things”); about 150 words corrected."],"id":"f540d7d"},{"v":"1.8","date":"2026-10-19","title":"Meanings in word details, and this changelog","notes":["Word details list a word's meanings, numbered, and ▸ marks the meaning the dictionary gives for the verse you're reading.","Settings › What's new shows every update. In the installed app you can switch back to an earlier version if an update causes problems."],"id":"8198655"},{"v":"1.7","date":"2026-10-19","title":"Install help for HarmonyOS","notes":["Instructions for adding Lectio to the home screen on HarmonyOS (Huawei Browser)."],"id":"c1fe9ce","site":1},{"v":"1.6","date":"2026-10-18","title":"Install help","notes":["An Install the app card with step-by-step instructions for Android, iPhone and links opened inside other apps."],"id":"12482bc","site":1},{"v":"1.5","date":"2026-10-18","title":"Home screen and themes","notes":["A home screen with Continue reading, Saved verses and Settings.","Themes: Auto, Light, Sepia and Dark.","Choose a Bible language and a default version to open in."],"id":"c64943d"},{"v":"1.4","date":"2026-10-18","title":"Strong's, BDB and Liddell","notes":["New dictionaries under Full entry: Strong's (Hebrew and Greek), the full Brown–Driver–Briggs and Liddell & Scott's Intermediate Greek–English Lexicon.","Verse references in BDB can be tapped to go to that verse.","Open ⤢ shows a long entry in a large window."],"id":"8f719d2"},{"v":"1.3","date":"2026-10-18","title":"Uses in the original language","notes":["Uses lists every verse where a Hebrew or Greek word appears, in the original text with the word marked and your version underneath.","It also shows the word's forms with counts and how the KJV translates it."],"id":"e09c45f"},{"v":"1.2","date":"2026-10-18","title":"Quotation marks, headings and psalm titles","notes":["Quotation marks added where a version prints none (KJV, ASV, Darby, Webster, UKJV, Geneva, Douay-Rheims, Tyndale, BBE, Brenton, Synodal, Church Slavonic, Makarius); Russian uses «…» and „…“.","Words of Jesus: the red runs exactly from his opening to his closing quotation mark, so the narrator stays black.","Section headings and paragraphs in every version, with links to parallel passages; Russian headings for the Russian and Slavonic texts.","Psalm titles are set apart from verse 1.","Each version keeps its own chapter and verse numbers; Compare lines them up verse by verse."],"id":"cb5fdf7"},{"v":"1.1","date":"2026-10-18","title":"Words of Jesus in red","notes":["The words of Jesus are shown in red in every version.","The installed app now downloads only the Bible files that changed in an update."],"id":"ab06c08"},{"v":"1.0","date":"2026-10-18","title":"First installable version","notes":["29 Bibles to read and compare side by side: English (KJV, BSB, WEB, LSV, ASV, YLT, Geneva, Douay-Rheims and more), Messianic and Jewish, the Hebrew Old Testament, four Greek New Testaments, Russian Synodal, Church Slavonic, Makarius and Shona.","Word links between the two columns, and word details with the Hebrew or Greek, grammar and meaning.","Footnotes from the KJV, BSB and WEB; highlights that follow the verse into every version; search by words, reference or Strong's number.","Copyrighted versions (NASB, NKJV, ESV, NIV and others, modern Russian and Xitsonga Bibles) open the same chapter on Bible.com.","Installable on phones and computers, with offline reading."],"id":"5fb3fcf"}];/*END RELEASES*/
 const IS_SITE=true;   // true on the installed site (set by build.py): earlier versions can be opened there
 const V=[
  {id:"BSB",name:"Berean Standard Bible",short:"BSB",lang:"en",g:"English — modern",hint:"closest to ESV/NASB · notes"},
@@ -1165,13 +1199,15 @@ function openVerseMenu(vn){
   if(!m.hidden&&vmFor===key){m.hidden=true;return}
   vmFor=key;
   m.innerHTML=HCOL.map(c=>'<button class="sw'+(c===cur?' on':'')+'" data-c="'+c+'" style="background:var(--h-'+c+')" aria-label="Highlight '+HNAME[c]+'" title="'+HNAME[c]+'"></button>').join("")+
-    '<span class="sep"></span>'+(cur?'<button class="tx" data-c="">Remove</button>':'')+'<button class="tx" data-copy>Copy</button>';
+    '<span class="sep"></span>'+(cur?'<button class="tx" data-c="">Remove</button>':'')+'<button class="tx" data-copy>Copy</button>'+
+    (PROT.indexOf(S.book)>=0?'<span class="vm-br"></span><button class="tx" data-study="x">Cross-references</button><button class="tx" data-study="c">Commentary</button>':'');
   m.hidden=false;
   const r=vn.getBoundingClientRect(),w=m.offsetWidth;
   let x=r.left+window.scrollX-8;x=Math.max(12+window.scrollX,Math.min(x,window.scrollX+document.documentElement.clientWidth-w-12));
   m.style.left=x+"px";m.style.top=(r.bottom+window.scrollY+6)+"px";
   m.onclick=e=>{const b=e.target.closest("button");if(!b)return;
     if(b.hasAttribute("data-copy")){m.hidden=true;copyVerse(vn);return}
+    if(b.dataset.study){m.hidden=true;openStudy(S.book,S.ch,v,b.dataset.study);return}
     setHighlight(key,b.dataset.c||null);m.hidden=true;toast(b.dataset.c?"Highlighted "+bookLabel(S.book)+" "+S.ch+":"+v:"Highlight removed")};
 }
 document.addEventListener("click",e=>{if(!e.target.closest("#vmenu")&&!e.target.closest(".vn"))$("#vmenu").hidden=true});
@@ -1520,6 +1556,99 @@ $("#dictBody").addEventListener("click",e=>{
   if(e.target.closest(".d-back")){dictHist.pop();if(dictHist.length)dictShow(dictHist[dictHist.length-1],false);else dictRender()}
 });
 $("#dictBtn").onclick=()=>{if(curDet&&curDet.dict)openDict(curDet.dict)};
+
+/* ---------- verse study: cross-references (OpenBible, TSK) and commentaries (data/study) ---------- */
+const COMMS=[["MH","Matthew Henry","Matthew Henry, Commentary on the Whole Bible (1706–1721)"],["JFB","JFB","Jamieson, Fausset & Brown, Commentary (1871)"],
+  ["BA","Barnes","Albert Barnes, Notes on the New Testament (1834–1885)"],["CL","Clarke","Adam Clarke, Commentary on the Bible (1810–1826)"],
+  ["GI","Gill","John Gill, Exposition of the Whole Bible (1746–1763)"],["TD","Spurgeon","C. H. Spurgeon, The Treasury of David (1869–1885)"]];
+const STUDY_REMOTE="https://chaukemuzamani.github.io/lectio-bible/";       // the Claude page has no room for these: read them from the installed site
+const STC={};
+function studyFile(p){return STC[p]||(STC[p]=fetchJSON("data/study/"+p).catch(()=>fetchJSON(STUDY_REMOTE+"data/study/"+p)).catch(e=>{delete STC[p];throw e}))}
+let ST=null;   // {book, ch, v (reading version), kb, kc, kv (KJV), tab}
+function openStudy(book,ch,v,tab){
+  ST={book,ch,v,tab:tab==="c"?"c":"x"};closeSheets();openSheet("#studySheet");renderStudy();
+}
+function stepStudy(d){
+  if(!ST)return;const vv=VC[S.ver];
+  getChapter(S.ver,ST.book,ST.ch).then(c=>{
+    let {book,ch,v}=ST;v+=d;
+    if(c&&v>c.length){const n=S._next&&ST.ch===S.ch&&ST.book===S.book?S._next:null;if(!n)return;book=n[0];ch=n[1];v=1}
+    else if(v<1){if(ch<=1)return;ch--;v=999}
+    Promise.resolve(v===999?getChapter(S.ver,book,ch).then(cc=>cc?cc.length:1):v).then(vn=>{ST={...ST,book,ch,v:vn};renderStudy()});
+  });
+}
+$("#stPrev").onclick=()=>stepStudy(-1);$("#stNext").onclick=()=>stepStudy(1);
+async function verseTextAt(book,c,v){   // KJV-numbered verse in the reading version
+  try{const d=await loadVer(S.ver);if(!d||d.map[book]==null)return "";const [nc,nv]=fromK(S.ver,book,c,v)[0]||[c,v];const vv=await getChapter(S.ver,book,nc);return vv&&vv[nv-1]?verseText(vv[nv-1]):""}catch(e){return ""}
+}
+function refLabel(book,c,v,c2,v2,b2){return bookLabel(book)+" "+c+":"+v+(v2?(b2&&b2!==book?"–"+bookLabel(b2)+" "+c2+":"+v2:c2&&c2!==c?"–"+c2+":"+v2:v2!==v?"–"+v2:""):"")}
+async function renderStudy(){
+  const body=$("#studyBody"),{book,ch,v}=ST,seq=(ST.seq=(ST.seq||0)+1);
+  const [kc,kv]=toK(S.ver,book,ch,v)[0]||[ch,v],kb=PROT.indexOf(book);Object.assign(ST,{kc,kv,kb});
+  $("#stTitle").textContent=bookLabel(book)+" "+ch+":"+v;
+  const vt=await verseTextAt(book,kc,kv);if(seq!==ST.seq)return;
+  let h='<div class="st-tabs"><button data-tab="x"'+(ST.tab==="x"?' class="on"':'')+'>Cross-references</button><button data-tab="c"'+(ST.tab==="c"?' class="on"':'')+'>Commentary</button></div>';
+  h+=vt?'<p class="st-verse"'+langAttr(vinfo(S.ver))+'>'+esc(vt)+'</p>':'';
+  body.innerHTML=h+'<div id="stPane"><span class="muted">Loading…</span></div>';$("#studySheet .sheet-body").scrollTop=0;
+  if(ST.tab==="x")renderXrefs(seq);else renderComm(seq);
+}
+async function renderXrefs(seq){
+  const pane=()=>$("#stPane"),{kb,kc,kv}=ST,mode=store.get("xrMode","ob");
+  let h='<div class="st-sub"><button data-xm="ob"'+(mode==="ob"?' class="on"':'')+' title="OpenBible.info: ranked by how many readers linked them">Most linked</button><button data-xm="tsk"'+(mode==="tsk"?' class="on"':'')+' title="Treasury of Scripture Knowledge (1830s)">Treasury of Scripture Knowledge</button></div>';
+  try{
+    if(mode==="ob"){
+      const d=await studyFile("xref/"+kb+".json");if(seq!==ST.seq)return;
+      const list=d[kc+":"+kv]||[];
+      if(!list.length){pane().innerHTML=h+'<p class="muted">No cross-references for this verse.</p>';return}
+      const all=ST.xrAll,shown=all?list:list.slice(0,12);
+      const rows=await Promise.all(shown.map(async([t,votes])=>{
+        const [a,z]=t.split("-"),[b,c,v]=a.split(".").map(Number),bk=PROT[b];let lab=refLabel(bk,c,v);
+        if(z){const [b2,c2,v2]=z.split(".").map(Number);lab=refLabel(bk,c,v,c2,v2,PROT[b2])}
+        const [nc,nv]=fromK(S.ver,bk,c,v)[0]||[c,v];
+        const tx=await verseTextAt(bk,c,v);
+        return '<button class="xr-row" data-go="'+esc(bk)+'|'+nc+'|'+nv+'"><b>'+esc(lab)+'</b><span class="xr-v">'+votes+' vote'+(votes===1?'':'s')+'</span>'+(tx?'<span class="xr-t"'+langAttr(vinfo(S.ver))+'>'+esc(tx.length>260?tx.slice(0,260)+"…":tx)+(z?' …':'')+'</span>':'')+'</button>'}));
+      if(seq!==ST.seq)return;
+      pane().innerHTML=h+'<div class="hits-meta">'+list.length+' cross-reference'+(list.length===1?'':'s')+', most linked first · OpenBible.info</div>'+rows.join("")+(list.length>shown.length?'<button class="xr-more" data-xall>Show all '+list.length+'</button>':'');
+    }else{
+      const d=await studyFile("tsk/"+kb+".json");if(seq!==ST.seq)return;
+      const g=d[kc+":"+kv]||[];
+      pane().innerHTML=h+(g.length?g.map(([kw,refs])=>'<div class="tsk-g">'+(kw?'<i>'+esc(kw)+'</i>':'')+refs.map(([lab,k])=>'<button class="xref" data-k="'+esc(k)+'">'+esc(lab)+'</button>').join("")+'</div>').join("")+'<div class="lex-src">Treasury of Scripture Knowledge (public domain)</div>':'<p class="muted">No Treasury references for this verse.</p>');
+    }
+  }catch(e){pane().innerHTML=h+'<p class="muted">Cross-references could not be loaded. Check your connection and try again.</p>'}
+}
+async function renderComm(seq){
+  const pane=()=>$("#stPane"),{kb,kc,kv}=ST;
+  let idx;try{idx=await studyFile("index.json")}catch(e){pane().innerHTML='<p class="muted">The commentaries could not be loaded. On this page they come from the installed app’s site; open Lectio from your home screen, or check your connection.</p>';return}
+  if(seq!==ST.seq)return;
+  const has=c=>(idx[c]&&idx[c][kb]||[]).includes(kc);
+  const avail=COMMS.filter(([c])=>has(c));
+  let cur=store.get("comm","MH");if(!avail.some(([c])=>c===cur))cur=avail.length?avail[0][0]:null;
+  let h='<div class="st-sub">'+COMMS.filter(([c])=>idx[c]&&idx[c][kb]).map(([c,n])=>'<button data-cm="'+c+'"'+(c===cur?' class="on"':'')+(has(c)?'':' disabled title="Not on this chapter"')+'>'+n+'</button>').join("")+'</div>';
+  if(!cur){pane().innerHTML=h+'<p class="muted">No commentary on this chapter.</p>';return}
+  pane().innerHTML=h+'<span class="muted">Loading…</span>';
+  try{
+    const es=await studyFile(cur+"/"+kb+"/"+kc+".json");if(seq!==ST.seq)return;
+    let hit=es.filter(([a,z])=>a>0&&a<=kv&&kv<=z);
+    if(!hit.length){const before=es.filter(([a])=>a>0&&a<=kv);if(before.length)hit=[before[before.length-1]]}
+    const intro=es.filter(([a])=>a===0);
+    const whole=!!ST.whole;
+    const shown=whole?es.filter(([a])=>a>0):hit;
+    let out=intro.length?'<details class="cm-intro"'+(hit.length?'':' open')+'><summary>Introduction to chapter '+kc+'</summary><div class="lexdef lexlong">'+intro.map(e=>e[2]).join("")+'</div></details>':'';
+    out+=shown.length?shown.map(([a,z,t])=>'<div class="cm-entry"><div class="cm-sec">'+(a===z?'Verse '+a:'Verses '+a+'–'+z)+'</div><div class="lexdef lexlong">'+t+'</div></div>').join(""):'<p class="muted">No note on this verse in this commentary.</p>';
+    out+='<button class="xr-more" data-whole>'+(whole?'Show only this verse':'Read the whole chapter')+'</button>';
+    out+='<div class="lex-src">'+esc(COMMS.find(x=>x[0]===cur)[2])+' — public domain</div>';
+    pane().innerHTML=h+out;
+  }catch(e){pane().innerHTML=h+'<p class="muted">This commentary could not be loaded. Check your connection and try again.</p>'}
+}
+$("#studyBody").addEventListener("click",e=>{
+  const t=e.target.closest("[data-tab]");if(t){ST.tab=t.dataset.tab;ST.xrAll=false;ST.whole=false;renderStudy();return}
+  const xm=e.target.closest("[data-xm]");if(xm){store.set("xrMode",xm.dataset.xm);ST.xrAll=false;renderXrefs(ST.seq=(ST.seq||0)+1);return}
+  if(e.target.closest("[data-xall]")){ST.xrAll=true;renderXrefs(ST.seq=(ST.seq||0)+1);return}
+  const cm=e.target.closest("[data-cm]");if(cm&&!cm.disabled){store.set("comm",cm.dataset.cm);ST.whole=false;renderComm(ST.seq=(ST.seq||0)+1);return}
+  if(e.target.closest("[data-whole]")){ST.whole=!ST.whole;renderComm(ST.seq=(ST.seq||0)+1);return}
+  const row=e.target.closest(".xr-row");if(row){const [n,c,v]=row.dataset.go.split("|");const d=VC[S.ver];if(!(d&&d.map[n]!=null)){toast(bookLabel(n)+" is not in "+vinfo(S.ver).short);return}closeSheets();go(n,+c,+v);return}
+  lexClick(e);
+});
 
 /* ---------- home ---------- */
 async function refreshHome(){

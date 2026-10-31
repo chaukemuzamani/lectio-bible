@@ -129,11 +129,22 @@
  },
  {
   "date": "2026-10-31",
-  "commit": null,
+  "commit": "a61fb7d",
   "title": "Chapter buttons always in reach",
   "notes": [
    "Previous and next chapter buttons now float at the sides of the screen (in the bottom corners on phones), so you can turn the chapter without scrolling to the end. The buttons at the bottom of the chapter are still there.",
    "Updates arrive sooner: the installed app now checks for a new version whenever it is opened or brought back to the screen, and switches to it straight away."
+  ]
+ },
+ {
+  "date": "2026-10-31",
+  "commit": null,
+  "title": "Cross-references and commentaries",
+  "notes": [
+   "Tap a verse number, then Cross-references or Commentary.",
+   "Cross-references: OpenBible.info’s 341,000 links, most linked by readers first, each with its verse text in the version you’re reading; or the Treasury of Scripture Knowledge’s 300,000 references grouped by word.",
+   "Commentaries: Matthew Henry, Jamieson-Fausset-Brown, Barnes (New Testament), Clarke, Gill and Spurgeon’s Treasury of David (Psalms). They open on the verse you tapped; “Read the whole chapter” shows the rest, and verse references in them can be tapped.",
+   "‹ and › step to the previous or next verse without closing the window."
   ]
  }
 ]
